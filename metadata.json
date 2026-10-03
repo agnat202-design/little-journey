@@ -1,0 +1,8 @@
+{
+  "name": "Little Journey Front End",
+  "description": "Private family dashboard for expectant parents to manage pregnancy preparation, budget, checklist, shopping wishlist, appointments, and timeline from trimester 2 to birth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

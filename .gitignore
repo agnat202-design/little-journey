@@ -1,0 +1,39 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Local QA artifacts and temporary files
+tmp/
+temp/
+.cache/
+*.tmp
+*.temp
+*.tsbuildinfo
+
+# Local editor, OS, and agent settings
+.vscode/
+.idea/
+.codex/
+.agents/
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Private credentials and key material
+.npmrc
+.netrc
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
