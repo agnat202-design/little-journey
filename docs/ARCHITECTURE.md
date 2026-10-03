@@ -1,101 +1,81 @@
-# Little Journey — System & Application Architecture (Architecture V2)
+# Little Journey — Architecture / Final Phase 1A.1 decisions
 
-## 1. System Topology Overview
+Frontend deployed on Cloudflare Pages; backend DESIGN ONLY. Supersedes old claims
+that Supabase Auth, database, Storage and realtime were already connected.
 
-```
- [ Client Browser: Mobile (PWA) / Desktop ]
-                    │
-            HTTPS / TLS (Edge)
-                    ▼
-     [ Cloudflare Pages Edge Network ]
-   (Vite Static Assets: HTML, JS, CSS)
-                    │
-           HTTPS + WebSockets
-                    ▼
-     [ Supabase Managed Services ]
- ┌──────────────────────────────────────┐
- │ • Supabase Auth (JWT / Magic Link)   │
- │ • PostgreSQL 15+ (PostgREST API)     │
- │ • Storage Buckets (Docs, Receipts)   │
- │ • Realtime Subscriptions (Broadcast) │
- │ • Row Level Security (RLS Engine)    │
- └──────────────────────────────────────┘
-```
+## Current deployed boundary
 
-The application operates as a zero-server-maintenance Jamstack architecture. Cloudflare Pages serves the compiled Vite bundle globally, while data persistence, authorization, file storage, and real-time synchronization are provided by Supabase.
+Vite frontend served by Cloudflare. React useState holds operational records,
+Budget/configured flag and optional category allocations for one page session.
+familyRecords coordinates Shopping/Expense mutations. Tasks add/toggle; other
+record screens CRUD. Browser blob attachments ephemeral. No Auth, Supabase client,
+backend persistence, Storage or realtime synchronization. Central labelled Demo
+pregnancy remains unchanged until real onboarding authorized. No source/UI/dependency,
+Cloudflare or environment changes in Phase 1A.
 
----
+## Proposed domain boundary
 
-## 2. Domain Topology & Lifecycle Architecture
+Household owns children, pregnancies, tasks, shopping_items, expenses, appointments,
+documents, optional budget_category_allocations. Profiles represent Auth users,
+membership grants active owner/member per-household access; users may join multiple
+households. Generic pregnancy_id/child_id/stage optional; household_id mandatory.
+Pregnancy never root owner of family/financial records. Child can enter after birth
+without Pregnancy. Nullable children.pregnancy_id supports one Pregnancy -> 0..many
+Children, including twins; pregnancies has no child_id. No persisted gestational metrics.
+Past HPL Pregnancy remains active until explicitly completed/birth; overdue derived
+by application date logic. Milestones deferred, no table. Invitation delivery future
+scope; only owner may invite/remove members or change their roles.
+Complete columns, constraints, mappings and questions in [DATABASE.md](DATABASE.md).
 
-Little Journey is architected as a household-centric, child-aware lifecycle platform spanning Pregnancy through approximately age 5:
+## Proposed financial boundary
 
-```
-HOUSEHOLD
-│ (household_id)
-├── profiles (Parents/Partners)
-├── household_members
-├── children (Optional child scoping; future-ready for multiple children)
-│
-└── Journeys & Lifecycle Stages (stage = 'pregnancy' | 'birth' | 'newborn' | 'infant' | 'toddler' | 'preschool')
-    ├── pregnancies (Dedicated entity for pregnancy-specific dates & notes)
-    ├── checklist_items (Generic tasks with optional targetGestationalWeek or targetDate)
-    ├── shopping_items (Generic procurement pipeline)
-    ├── expenses (Generic financial obligations and cash paid out)
-    ├── appointments (Generic visits & healthcare events)
-    ├── documents (Generic records & attachments)
-    └── milestones (Generic developmental & preparation milestones)
-```
+Expenses alone actual spend. Nullable household total_budget distinguishes unconfigured
+from explicit zero. Keep category allocations: current BudgetSetupModal has editable
+optional category inputs, saves them and App retains/reopens these settings; user
+configuration needs persistence. Both active owner/member may edit total and categories.
+Allocations planning only. Shopping quantity and nullable estimated_unit_price define
+derived estimate quantity × unit price, unknown if unit price NULL; no stored total.
+actual purchase amount/date derive from current Expense. Only persisted purchase FK
+expenses.shopping_item_id, unique when non-null. Reverse keep/delete item detaches
+and retains Expense history. Later atomic database operations and deferred invariants
+enforce linked state; not separate client requests. Legacy Shopping spending fallback
+must not become production aggregate. MVP Expense stores only actual paid_amount/date,
+not cumulative obligation total/payment status. Installments/refunds future scope only.
 
-### 2.1 Decoupling Principles
-- **No Mandatory Pregnancy Coupling**: Operational modules (Checklist, Shopping, Expenses, Appointments, Documents) do NOT enforce gestational weeks as mandatory fields.
-- **Stage Isolation**: Stage-specific timing concepts (e.g. `targetGestationalWeek` for pregnancy, `targetAgeMonths` for toddlers) are optional context properties.
-- **Derived Gestational Metrics**: Gestational week, day, trimester, and countdown are derived dynamically at runtime from `pregnancies.due_date` using deterministic math—never statically persisted.
+## Proposed Auth/security boundary
 
----
+Auth owns credentials, profiles display metadata only. Non-account partner name is
+household display information, not fake auth identity. First household/owner bootstrap
+atomic; protect last active owner; no arbitrary self-enrollment. Proposed RLS uses
+active membership: owner/member can create/edit normal data including preparation
+budget. Owner alone invites/removes members, changes roles and performs destructive
+household administration. No non-owner membership mutation path. Same-household composite FKs
+enforce context isolation, old/new update scope checked and creator/tenant immutable.
+Narrow private membership helper avoids recursion; privileged RPC explicitly authorizes
+caller and tenant with fixed search_path. Service-role credentials never in browser.
+No actual Auth/policies/functions configured. Account/household deletion and retention
+later policy; restrictive defaults avoid automatic financial/document history cascades.
+No retention/anonymization/purge subsystem designed now.
 
-## 3. Frontend Architecture
+## Proposed file boundary
 
-### 3.1 State Management & Data Layer
-- **Lightweight State Boundary**: Data state is managed via lightweight React Contexts/state hooks. No Redux or heavy boilerplate state libraries are introduced.
-- **Active Stage Context**: `activeStage: JourneyStage` defaults to `'pregnancy'` for the current MVP. The dashboard and Quick Add adapt contextually without altering global schemas.
-- **Hero Architectural Seam**:
-  ```
-  JourneyHero
-    ├── PregnancyHero (Active in MVP)
-    ├── NewbornHero (Future)
-    ├── InfantHero (Future)
-    ├── ToddlerHero (Future)
-    └── PreschoolHero (Future)
-  ```
+DB stores metadata, future private Storage stores bytes. Document metadata required,
+Expense receipt metadata optional. No automatic Document copy. Blob/local/signed URLs
+not persisted; independent file membership policies and retryable orphan cleanup later.
+DB metadata and byte deletion not one transaction. No Storage configured now.
 
-### 3.2 Responsive Dual Experience
-- **Mobile (< 1024px)**: Native-feeling mobile app with sticky `TopHeader`, swipe-friendly horizontal filter carousels, sticky `BottomNav`, and thumb-friendly `QuickAddBottomSheet`.
-- **Desktop (>= 1024px)**: Left `DesktopSidebar` with `+ Catat Cepat` prominent button, hidden mobile bottom navigation, and a balanced 2-column dashboard grid.
+## Review gate
 
----
-
-## 4. Security & Multi-Tenancy Architecture
-
-All operational data is strictly scoped to `household_id`.
-
-```
-Authenticated User (auth.uid())
-        ↓
-household_members
-        ↓
-household_id
-        ↓
-Authorized Household Data (children, pregnancies, tasks, shopping, expenses, appointments, documents)
-```
-
-- **Child & Journey Inheritance**: Child and stage data inherit security isolation directly through household membership.
-- **RLS Guard**: PostgreSQL Row Level Security (RLS) policies evaluate `is_member_of_household(household_id)` for all operations.
-
----
-
-## 5. Deployment Architecture
-
-- **Platform**: Cloudflare Pages.
-- **Build Output**: `dist/` generated by `vite build`.
-- **Operating Cost**: $0/month on standard free tiers (Cloudflare Pages + Supabase Free/Pro Tier).
+Human schema review before separately authorized SQL/RLS tests, Auth, Storage,
+packages/env/adapters/onboarding. Real setup supplies household/profile/HPL; then Demo
+removed from production path. Never seed real users with fixtures or dummy local IDs.
+No remaining product blocker for drafting Phase 1 SQL; explicit migration authorization
+still required, with tenant/RLS and atomic finance invariant tests at that later step.
+Phase 1A.1 documentation-only decisions are frozen. Phase 2 migration is now prepared
+under supabase/migrations with 23 local PostgreSQL/WASM checks (minimal Auth stubs).
+It has not been executed on the user's project. See [manual preflight and validation
+limits](../supabase/README.md). No frontend client/Auth/Storage/env connection added.
+Dedicated financial RPC integration and multi-connection concurrency verification
+remain required before real frontend persistence; deferred constraints reject partial
+purchase writes meanwhile. Generic context deletion currently RESTRICTs until explicit
+unlink, preventing silent history destruction. No household/account deletion API.
