@@ -1,3 +1,4 @@
+import { MonthlyReportModal } from './components/modals/MonthlyReportModal';
 import React, { useState, useMemo } from 'react';
 import { BottomNav, TabKey } from './components/navigation/BottomNav';
 import { TopHeader } from './components/navigation/TopHeader';
@@ -31,6 +32,7 @@ import { TaskEditor } from './components/modals/TaskEditor';
 import { PregnancySetup } from './components/modals/PregnancySetup';
 
 export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
+  const [reportOpen,setReportOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DesktopNavKey>('home');
   // Active Lifecycle Stage (MVP is 'pregnancy'; future-ready for birth, newborn, etc.)
   const [activeStage] = useState<JourneyStage>('pregnancy');
@@ -192,6 +194,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
         {control.current?.fileCleanupPending && <p role="alert" className="px-4 py-3 text-sm bg-[#FFF8DE]">Catatan tersimpan, tetapi file lama belum berhasil dihapus dari penyimpanan.</p>}
         {saveError && <div role="alert" className="fixed inset-x-4 top-4 z-[110] mx-auto max-w-xl rounded-2xl border border-[#F0C6BF] px-5 py-4 shadow-xl text-sm text-[#B14435] bg-[#FFF2EF]">{saveError} <button onClick={()=>window.location.reload()} className="mt-2 block underline font-bold">Muat ulang data</button></div>}
         <div className="lg:hidden px-4"><button onClick={()=>setActiveTab('profile')} className="px-3 py-2 text-xs font-bold text-[#6C4CF5]">Profil</button></div>
+        {runtime && <div className="px-4 lg:px-8 py-2"><button onClick={()=>setReportOpen(true)} className="rounded-full border border-[#E9E4DC] bg-white px-4 py-2 text-xs font-bold text-[#6C4CF5]">Download Laporan Bulanan</button></div>}
         {/* Dynamic View Display */}
         <main className="flex-1 py-4 sm:py-6">
           {activeTab === 'profile' && runtime?.client && runtime?.user && <ProfileView client={runtime.client} user={runtime.user} householdId={runtime.initial.householdId} />}
@@ -303,6 +306,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
         onSaveBudgetSetup={(newBudget, newCats) => commit({totalBudget:newBudget,budgetConfigured:true,allocations:newCats})}
       />
 
+      {reportOpen && runtime && <MonthlyReportModal runtime={runtime} onClose={()=>setReportOpen(false)} />}
       {taskEditor && <TaskEditor key={taskEditor.id} item={taskEditor} onClose={()=>setTaskEditor(null)} onSave={item=>setChecklistItems(prev=>prev.map(old=>old.id===item.id?item:old),()=>setTaskEditor(null))} />}
       {saving && <div role="status" aria-live="polite" className="fixed inset-0 z-[100] bg-white/60 backdrop-blur-xs flex items-center justify-center"><p className="rounded-2xl bg-white px-6 py-4 shadow-lg font-bold text-[#34236B]">Menyimpan…</p></div>}
     </div>
