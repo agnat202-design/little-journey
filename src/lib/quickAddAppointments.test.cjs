@@ -133,7 +133,7 @@ test('Global + opens neutral and resets after closing', () => {
 test('Expense categories are five plain choices, optional, with legacy values preserved', () => {
   const entry=openQuick('Pengeluaran');const form=render(entry.type,entry.props);const select=find(form,n=>n.props.id==='record-category');
   assert.equal(nodes(select).filter(n=>n.type==='option').length,6);
-  assert.ok(text(select).includes('Kesehatan'));assert.ok(text(select).includes('Kebutuhan bayi'));
+  assert.ok(text(select).includes('Kesehatan'));assert.ok(text(select).includes('Kebutuhan anak'));
   assert.ok(!text(select).includes('Diapering'));assert.equal(select.props.required,undefined);
 });
 
