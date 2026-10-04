@@ -4,7 +4,7 @@ import { HouseholdRepository,persistenceError } from '../lib/householdRepository
 import type { HouseholdSnapshot } from '../lib/householdRecords';
 import { fieldClass,labelClass } from './records/RecordEditor';
 
-export interface HouseholdRuntime { initial:HouseholdSnapshot; save:(next:HouseholdSnapshot)=>Promise<HouseholdSnapshot>; }
+export interface HouseholdRuntime { initial:HouseholdSnapshot; client?:SupabaseClient; user?:User; save:(next:HouseholdSnapshot)=>Promise<HouseholdSnapshot>; }
 export default function HouseholdGate({client,user,children}:{client:SupabaseClient;user:User;children:(runtime:HouseholdRuntime)=>ReactNode}) {
   const [repository,setRepository] = useState<HouseholdRepository | null>(null);
   const [choices,setChoices] = useState<Array<{id:string;name:string}>>([]);
@@ -31,7 +31,7 @@ export default function HouseholdGate({client,user,children}:{client:SupabaseCli
     finally{setLoading(false);}
   }
   useEffect(()=>{void discover();},[client,user.id]);
-  if(repository) return <>{children({initial:repository.current,save:next=>repository.save(next)})}</>;
+  if(repository) return <>{children({initial:repository.current,client,user,save:next=>repository.save(next)})}</>;
   return <main className="min-h-[85svh] bg-[#FCFBF8] flex items-center justify-center p-5"><section className="w-full max-w-md rounded-[28px] bg-white border border-[#F0ECE4] p-7 shadow-sm">
     <img src="/little-journey-mark.svg" alt="" width="48" height="48" className="mb-5" />
     <h1 className="text-2xl font-black text-[#34236B]">{choices.length?'Pilih keluarga':'Siapkan ruang keluarga'}</h1>

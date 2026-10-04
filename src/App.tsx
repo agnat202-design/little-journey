@@ -3,6 +3,7 @@ import { BottomNav, TabKey } from './components/navigation/BottomNav';
 import { TopHeader } from './components/navigation/TopHeader';
 import { DesktopSidebar, DesktopNavKey } from './components/layout/DesktopSidebar';
 import { DashboardView } from './components/views/DashboardView';
+import { ProfileView } from './components/views/ProfileView';
 import { ChecklistView } from './components/views/ChecklistView';
 import { ShoppingView } from './components/views/ShoppingView';
 import { BudgetView } from './components/views/BudgetView';
@@ -190,8 +191,10 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
         <header className="hidden lg:flex items-center justify-between px-8 py-4 bg-white/80 border-b border-[#F0ECE4] sticky top-0 z-20"><div><span className="text-xs font-bold text-[#79738E]">Selamat datang 👋</span><h2 className="text-lg font-black text-[#292442]">Little Journey</h2></div>{runtime && <button onClick={()=>setPregnancySetup(true)} className="px-4 py-2 rounded-full bg-[#EEE9FF] text-[#6C4CF5] text-xs font-black">Atur HPL</button>}</header>
         {control.current?.fileCleanupPending && <p role="alert" className="px-4 py-3 text-sm bg-[#FFF8DE]">Catatan tersimpan, tetapi file lama belum berhasil dihapus dari penyimpanan.</p>}
         {saveError && <div role="alert" className="fixed inset-x-4 top-4 z-[110] mx-auto max-w-xl rounded-2xl border border-[#F0C6BF] px-5 py-4 shadow-xl text-sm text-[#B14435] bg-[#FFF2EF]">{saveError} <button onClick={()=>window.location.reload()} className="mt-2 block underline font-bold">Muat ulang data</button></div>}
+        <div className="lg:hidden px-4"><button onClick={()=>setActiveTab('profile')} className="px-3 py-2 text-xs font-bold text-[#6C4CF5]">Profil</button></div>
         {/* Dynamic View Display */}
         <main className="flex-1 py-4 sm:py-6">
+          {activeTab === 'profile' && runtime?.client && runtime?.user && <ProfileView client={runtime.client} user={runtime.user} householdId={runtime.initial.householdId} />}
           {activeTab === 'home' && (
             <DashboardView
               onNavigateTab={(tab) => setActiveTab(tab)}

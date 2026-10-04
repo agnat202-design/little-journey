@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict');
+const vm=require('node:vm');const {buildSync}=require('esbuild');
+let state=[],index=0,effect,events=[],childRows=[{id:'child-1',display_name:'Anak Lama'}];
+const React={createElement:(type,props,...children)=>({type,props:{...props,children}}),useState(initial){const n=index++;if(!(n in state))state[n]=initial;return[state[n],v=>state[n]=v];},useEffect(fn){effect=fn;}};
+const code=buildSync({entryPoints:['src/components/views/ProfileView.tsx'],bundle:true,write:false,format:'cjs',platform:'node',jsx:'transform',tsconfigRaw:{compilerOptions:{jsx:'react'}},external:['react'],define:{'import.meta.env':'{}'}}).outputFiles[0].text;
+const mod={exports:{}};let reloaded=0;
+vm.runInNewContext(code,{module:mod,exports:mod.exports,require:n=>React,window:{location:{reload:()=>reloaded++}}});
+const client={from(table){let operation='select',row,filters=[];const q={select(){return q;},eq(k,v){filters.push([k,v]);return q;},order(){return q;},update(value){operation='update';row=value;return q;},insert(value){operation='insert';row=value;return q;},single(){return q;},then(resolve){events.push({table,operation,row,filters});let data;if(table==='households')data=operation==='select'?{name:'Keluarga Awal'}:{id:'family-1'};else if(operation==='select')data=childRows;else{if(operation==='insert')childRows=[...childRows,{id:'child-2',display_name:row.display_name}];else childRows=childRows.map(c=>c.id===filters.find(f=>f[0]==='id')[1]?{...c,...row}:c);data={id:'saved'};}return Promise.resolve({data,error:null}).then(resolve);}};return q;}};
+const props={client,user:{email:'real@example.com'},householdId:'family-1'};
+const render=()=>{index=0;return mod.exports.ProfileView(props);};
+const nodes=t=>!t||typeof t!=='object'?[]:[t,...(t.props.children||[]).flat(Infinity).flatMap(nodes)];
+const text=t=>t==null||typeof t==='boolean'?'':typeof t!=='object'?String(t):(t.props.children||[]).flat(Infinity).map(text).join('');
+const find=(t,fn)=>{const n=nodes(t).find(fn);assert.ok(n);return n;};
+const tick=()=>new Promise(r=>setImmediate(r));
+(async()=>{render();effect();await tick();let tree=render();assert.ok(text(tree).includes('real@example.com'));assert.ok(text(tree).includes('Anak Lama'));
+find(tree,n=>n.props.id==='child-profile-name').props.onChange({target:{value:'Anak Baru'}});tree=render();find(tree,n=>n.type==='form'&&text(n).includes('Tambah nama anak')).props.onSubmit({preventDefault(){}});await tick();tree=render();assert.ok(text(tree).includes('Anak Baru'));assert.ok(events.some(e=>e.operation==='insert'&&e.row.household_id==='family-1'));
+find(tree,n=>n.type==='button'&&text(n)==='Edit').props.onClick();tree=render();find(tree,n=>n.props.id==='child-profile-name').props.onChange({target:{value:'Nama Revisi'}});tree=render();find(tree,n=>n.type==='form'&&text(n).includes('Edit nama anak')).props.onSubmit({preventDefault(){}});await tick();tree=render();assert.ok(text(tree).includes('Nama Revisi'));assert.ok(events.some(e=>e.operation==='update'&&e.table==='children'&&e.filters.some(f=>f[0]==='household_id'&&f[1]==='family-1')));
+find(tree,n=>n.props.id==='family-profile-name').props.onChange({target:{value:'Keluarga Revisi'}});tree=render();await find(tree,n=>n.type==='form'&&text(n).includes('Simpan Nama Keluarga')).props.onSubmit({preventDefault(){}});assert.equal(reloaded,1);assert.ok(events.some(e=>e.table==='households'&&e.operation==='update'&&e.row.name==='Keluarga Revisi'));console.log('PASS profile: authenticated email, scoped family update, child add/edit, acknowledgement and reload');})().catch(e=>{console.error(e);process.exitCode=1;});

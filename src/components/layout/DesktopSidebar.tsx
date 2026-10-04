@@ -18,6 +18,7 @@ export type DesktopNavKey =
   | 'budget'
   | 'appointments'
   | 'documents'
+  | 'profile'
   ;
 
 interface DesktopSidebarProps {
@@ -50,6 +51,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   const secondaryNav = [
     { key: 'appointments' as const, label: 'Appointments', icon: Stethoscope },
     { key: 'documents' as const, label: 'Documents', icon: FolderOpen },
+    { key: 'profile' as const, label: 'Profil', icon: Home },
 
   ];
 
