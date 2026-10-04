@@ -42,7 +42,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
   const [checklistItems, applyTasks] = useState<ChecklistItem[]>(runtime?.initial.tasks || []);
   const [records, applyRecords] = useState<FamilyRecords>(() => runtime?.initial.records || ({ shoppingItems: [], expenses: [], appointments: [], documents: [] }));
   const { shoppingItems, expenses, appointments, documents } = records;
-  const [editor, setEditor] = useState<{ kind: EntryKind; record?: any } | null>(null);
+  const [editor, setEditor] = useState<{ kind: EntryKind; record?: any; template?: any } | null>(null);
   const [taskEditor, setTaskEditor] = useState<ChecklistItem | null>(null);
   const [attachment, setAttachment] = useState<LocalAttachment | null>(null);
   const [expenseDetail, setExpenseDetail] = useState<Expense | null>(null);
@@ -254,6 +254,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
               appointments={appointments}
               onAddAppointment={() => setEditor({ kind: 'appointment' })}
               onEdit={record => setEditor({ kind: 'appointment', record })}
+              onScheduleAgain={record => setEditor({kind:'appointment',template:{purpose:record.purpose,doctor:record.doctor,hospital:record.hospital}})}
               onDelete={record => requestRecordDelete('appointment', record.id)}
             />
           )}
@@ -284,7 +285,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
         activeStage={activeStage}
       />
 
-      {editor && <RecordEditor key={editor.kind + (editor.record?.id || 'new')} kind={editor.kind} record={editor.record} stage={editor.record?.stage || activeStage} onSave={data => saveRecord(editor.kind, data, editor.record)} onClose={() => setEditor(null)} />}
+      {editor && <RecordEditor key={editor.kind + (editor.record?.id || 'new')} kind={editor.kind} record={editor.record} template={editor.template} stage={editor.record?.stage || activeStage} onSave={data => saveRecord(editor.kind, data, editor.record)} onClose={() => setEditor(null)} />}
       {confirmation && <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-xs flex items-center justify-center p-4"><div role="dialog" aria-modal="true" aria-labelledby="confirmation-title" className="bg-white rounded-[28px] p-6 w-full max-w-md shadow-xl space-y-4"><h2 id="confirmation-title" className="text-lg font-black text-[#292442]">{confirmation.title}</h2><p className="text-sm text-[#79738E]">{confirmation.body}</p><div className="space-y-2">{confirmation.actions.map(action => <button key={action.label} onClick={() => { action.run(); setConfirmation(null); }} className="block w-full px-4 py-3 rounded-2xl bg-[#34236B] text-white text-xs font-black">{action.label}</button>)}<button onClick={() => setConfirmation(null)} className="w-full py-2 text-xs font-bold text-[#79738E]">Batal</button></div></div></div>}
       {expenseDetail && <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4"><div role="dialog" aria-modal="true" aria-labelledby="expense-detail-title" className="bg-white rounded-[28px] p-6 w-full max-w-md space-y-3"><div className="flex items-start justify-between"><h2 id="expense-detail-title" className="font-black text-[#292442]">{expenseDetail.title}</h2><button aria-label="Tutup Detail" onClick={() => setExpenseDetail(null)}>✕</button></div><p className="text-sm text-[#79738E]">{displayDate(expenseDetail.expenseDate)} • {expenseDetail.category || 'Tanpa kategori'}</p><p className="font-black text-[#34236B]">Rp {expenseDetail.paidAmount.toLocaleString('id-ID')}</p>{expenseDetail.notes && <p className="text-sm text-[#79738E]">{expenseDetail.notes}</p>}{expenseDetail.attachment && <button onClick={() => setAttachment(expenseDetail.attachment!)} className="px-3 py-2 rounded-xl bg-[#EEE9FF] text-[#6C4CF5] font-black text-xs">Lihat Lampiran: {expenseDetail.attachment.name}</button>}</div></div>}
       {attachment && <AttachmentView attachment={attachment} onClose={() => setAttachment(null)} />}

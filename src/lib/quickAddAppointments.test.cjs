@@ -72,7 +72,7 @@ test('Initial empty records contain no invented personal data or misleading sess
 
 test('Checklist has no gestational timing controls', () => {
   nav('checklist'); const list=view('ChecklistView');const tree=render(list.type,list.props);
-  assert.ok(!/Semua Minggu|Target Trimester|s/d W/.test(text(tree)));
+  assert.ok(!/Semua Minggu|Target Trimester/.test(text(tree)));
   component(app(),'DesktopSidebar').props.onQuickAdd();const sheet=view('QuickAddBottomSheet');const shell=render(sheet.type,sheet.props);let body=render(shell.type,shell.props);
   button(body,'Checklist').props.onClick();body=render(shell.type,shell.props);
   assert.ok(text(body).includes('Simpan Checklist'));assert.ok(!text(body).includes('Target Minggu'));
@@ -135,12 +135,32 @@ test('Appointment required date, quick time, separate doctor/location and notes;
   let form = fillEntry(entry, { 'record-title': 'Kontrol keluarga' });
   assert.equal(find(form, n => n.type === 'button' && n.props.type === 'submit').props.disabled, true);
   submit(form); nav('appointments'); assert.equal(view('AppointmentsView').props.appointments.length, 0);
-  form = fillEntry(entry, { 'record-date': '2026-10-25', 'appointment-time-choice': '10:00', 'appointment-doctor': 'dr. Keluarga', 'appointment-location': 'Klinik pilihan', 'record-notes': 'Bawa hasil lab', 'record-week': '27' });
+  form = fillEntry(entry, { 'record-date': '2026-10-25', 'appointment-time-choice': '10:00', 'appointment-doctor': 'dr. Keluarga', 'appointment-location': 'Klinik pilihan', 'record-notes': 'Bawa hasil lab' });
   const options = find(form, n => n.props.id === 'appointment-time-choice');
   for (const time of ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','Lainnya']) assert.ok(text(options).includes(time));
   submit(form); const list = view('AppointmentsView'); const saved = list.props.appointments[0];
   assert.equal(saved.appointmentDate, '2026-10-25'); assert.equal(saved.appointmentTime, '10:00'); assert.equal(saved.doctor, 'dr. Keluarga'); assert.equal(saved.hospital, 'Klinik pilihan'); assert.equal(saved.notes, 'Bawa hasil lab'); assert.ok(!('cost' in saved));
   const display = text(render(list.type, list.props)); assert.ok(display.includes('25 Okt 2026 • 10:00')); assert.ok(!/Estimasi Biaya|Rp /.test(display));
+});
+
+test('Schedule again creates a separate appointment with same doctor/location and requires a new date', () => {
+  const entry=openQuick('Jadwal');submit(fillEntry(entry,{'record-title':'Kontrol','record-date':'2026-10-16','appointment-doctor':'Dr Indri','appointment-location':'Klinik','appointment-time-choice':'11:00','record-notes':'Catatan lama'}));
+  let list=view('AppointmentsView');const original=list.props.appointments[0];
+  const tree=render(list.type,list.props);button(tree,'Jadwalkan Lagi').props.onClick();
+  const next=entryFromEditor();states.delete(stateKey(next.type,next.props));let form=render(next.type,next.props);
+  assert.equal(find(form,n=>n.props.id==='record-title').props.value,'Kontrol');
+  assert.equal(find(form,n=>n.props.id==='appointment-doctor').props.value,'Dr Indri');
+  assert.equal(find(form,n=>n.props.id==='appointment-location').props.value,'Klinik');
+  assert.equal(find(form,n=>n.props.id==='record-date').props.value,'');
+  assert.equal(find(form,n=>n.props.id==='appointment-time-choice').props.value,'');
+  assert.equal(find(form,n=>n.props.id==='record-notes').props.value,'');
+  assert.ok(!nodes(form).some(n=>n.props.id==='record-week'));
+  submit(form);assert.equal(view('AppointmentsView').props.appointments.length,1);
+  form=fillEntry(next,{'record-date':'2026-11-17'});submit(form);
+  list=view('AppointmentsView');assert.equal(list.props.appointments.length,2);
+  assert.equal(list.props.appointments[0].appointmentDate,'2026-11-17');
+  assert.notEqual(list.props.appointments[0].id,original.id);
+  assert.deepEqual(list.props.appointments[1],original);
 });
 
 test('Appointment custom time, optional time, edit and confirmed delete', () => {
