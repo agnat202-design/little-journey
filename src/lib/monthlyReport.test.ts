@@ -1,3 +1,4 @@
+import {createReportPdf} from './reportPdf';
 import assert from 'node:assert/strict';
 import {monthlyReport} from './monthlyReport';
 import type {HouseholdSnapshot} from './householdRecords';
@@ -5,3 +6,6 @@ const s:HouseholdSnapshot={householdId:'h',householdName:'<script>alert(1)</scri
 const html=monthlyReport(s,'2026-10',new Date('2026-10-04T12:00:00Z'));
 assert.ok(html.includes('Pembelian bulan ini'));assert.ok(!html.includes('TRANSAKSI BULAN LAMA'));assert.ok(html.includes('Checklist tersimpan'));assert.ok(html.includes('Kontrol'));assert.ok(html.includes('&lt;script&gt;'));assert.ok(!html.includes('<script>alert'));assert.ok(html.includes('kondisi saat diunduh'));assert.ok(html.includes('100'));assert.ok(html.includes('Cetak / Simpan PDF'));assert.throws(()=>monthlyReport(s,'2026-13'));
 console.log('PASS monthly report: month boundaries, expense source, complete sections, snapshot labels, HTML escaping and print controls');
+
+const pdf=createReportPdf({title:'Oktober 2026',family:'Keluarga Uji',summary:['Pengeluaran Rp100.000'],sections:[{title:'Riwayat pengeluaran',caption:'Transaksi bulan terpilih',headers:['Tanggal','Uraian','Jumlah'],rows:Array.from({length:150},(_,i)=>['04 Okt 2026','Catatan '+i+' '.repeat(2)+'Kebutuhan keluarga dengan catatan panjang','Rp100.000'])}],footer:'Catatan tersimpan saat diunduh.'});
+assert.ok(pdf.getNumberOfPages()>1);assert.ok(pdf.output().startsWith('%PDF-'));console.log('PASS direct PDF: valid PDF, multipage tables and page numbering');
