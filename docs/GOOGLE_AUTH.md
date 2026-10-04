@@ -2,9 +2,11 @@
 
 The frontend supports Google registration/sign-in through Supabase Auth, PKCE,
 session restoration and local-device logout. Google redirects back to the app
-origin. Signed-out users cannot open operational screens. Prototype state resets
-when an account changes. Authentication does not yet persist family records;
-the UI explicitly says so. Household onboarding and module persistence come next.
+origin. Signed-out users cannot open operational screens. Account changes remount
+the app; signed-in users load their authorized household through HouseholdGate.
+Database/Storage persistence now requires the second migration described in
+[supabase/README.md](../supabase/README.md). Google provider activation was confirmed
+by the user's screenshot; full persistence rollout status is in [PRM.md](PRM.md).
 
 ## Account-owner setup (required before real login works)
 

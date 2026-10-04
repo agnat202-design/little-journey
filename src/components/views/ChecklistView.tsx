@@ -102,7 +102,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                 : 'bg-white text-[#79738E] border border-[#EBE6DC] hover:text-[#292442]'
             }`}
           >
-            Demo: s/d W{currentWeek}
+            {currentWeek ? `s/d W${currentWeek}` : 'HPL belum diatur'}
           </button>
           <button
             role="tab"

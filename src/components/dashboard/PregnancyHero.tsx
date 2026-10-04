@@ -4,6 +4,7 @@ import { displayDate } from '../../lib/familyRecords';
 
 interface PregnancyHeroProps {
   demoDueDate: string;
+  isDemo?: boolean;
   currentWeek: number;
   trimester: number;
   daysRemaining: number;
@@ -16,6 +17,7 @@ interface PregnancyHeroProps {
  */
 export const PregnancyHero: React.FC<PregnancyHeroProps> = ({
   demoDueDate,
+  isDemo = true,
   currentWeek,
   trimester,
   daysRemaining,
@@ -34,14 +36,14 @@ export const PregnancyHero: React.FC<PregnancyHeroProps> = ({
         <div className="flex-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-[#FFD45A] text-xs font-black mb-2">
             
-            <span>Demo • Minggu ke-{currentWeek} • Trimester {trimester}</span>
+            <span>{isDemo?'Demo • ':''}Minggu ke-{currentWeek} • Trimester {trimester}</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-            Contoh perjalanan kehamilan
+            {isDemo?'Contoh perjalanan kehamilan':'Perjalanan kehamilan'}
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-white/80 mt-1">
-            {daysRemaining} hari menuju HPL contoh {displayDate(demoDueDate)}
+            {daysRemaining>0?`${daysRemaining} hari menuju `:''}HPL {isDemo?'contoh ':''}{displayDate(demoDueDate)}
           </p>
         </div>
 
@@ -67,7 +69,7 @@ export const PregnancyHero: React.FC<PregnancyHeroProps> = ({
         </div>
       </div>
 
-      <p className="mt-3 text-[11px] text-white/80">Data demo dari HPL contoh, bukan data kehamilan kamu. Pengaturan kehamilan belum tersedia.</p>
+      <p className="mt-3 text-[11px] text-white/80">{isDemo?'Data demo dari HPL contoh, bukan data kehamilan kamu. Pengaturan kehamilan belum tersedia.':'Dihitung dari HPL yang Anda masukkan.'}</p>
     </section>
   );
 };

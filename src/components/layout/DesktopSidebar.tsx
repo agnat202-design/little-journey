@@ -24,8 +24,10 @@ interface DesktopSidebarProps {
   activeTab: DesktopNavKey;
   onTabChange: (tab: DesktopNavKey) => void;
   onQuickAdd: () => void;
-  currentWeek: number;
-  currentDay: number;
+  currentWeek?: number;
+  currentDay?: number;
+  householdName?: string;
+  isDemo?: boolean;
 }
 
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
@@ -34,6 +36,8 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   onQuickAdd,
   currentWeek,
   currentDay,
+  householdName,
+  isDemo = true,
 }) => {
   const primaryNav = [
     { key: 'home' as const, label: 'Home', icon: Home },
@@ -58,14 +62,14 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         {/* App Logo & Branding */}
         <div className="flex items-center gap-3 px-2 mb-6">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#34236B] to-[#6C4CF5] flex items-center justify-center text-white shadow-md shadow-[#6C4CF5]/20 shrink-0">
-            <Sparkles className="w-5 h-5 fill-current text-[#FFD45A]" />
+            <img src="/little-journey-mark.svg" alt="" width="40" height="40" />
           </div>
           <div>
             <h1 className="text-lg font-black text-[#292442] tracking-tight leading-none">
               Little Journey
             </h1>
             <span className="text-[11px] font-extrabold text-[#6C4CF5] bg-[#EEE9FF] px-2 py-0.5 rounded-full inline-block mt-1">
-              Demo • W{currentWeek} • D{currentDay}
+              {currentWeek===undefined?'Keluarga':`${isDemo?'Demo • ':''}W${currentWeek} • D${currentDay}`}
             </span>
           </div>
         </div>
@@ -134,10 +138,10 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       <div className="bg-[#FCFBF8] p-3.5 rounded-2xl border border-[#F0ECE4] flex items-center gap-3">
         <PipMascot mood="happy" size={44} className="shrink-0" />
         <div className="overflow-hidden">
-          <p className="text-xs font-black text-[#292442] truncate">Prototipe Lokal</p>
+          <p className="text-xs font-black text-[#292442] truncate">{householdName || 'Little Journey'}</p>
           <span className="text-[11px] font-bold text-[#1EA896] flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-[#52D6C7]" />
-            Sesi sementara
+            Ruang keluarga
           </span>
         </div>
       </div>

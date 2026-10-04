@@ -1,4 +1,4 @@
-> Current status (4 October 2026): [PRM.md](PRM.md) is the current product status and release gate. Google Auth is connected; operational records and attachments are NOT persisted to Supabase yet. Real family data entry is not ready. The specification below is historical; old phase, sync, financial-model and readiness claims must not be interpreted as current implementation.
+> Current status (4 October 2026): [PRM.md](PRM.md) is the current product status and release gate. Source now implements Google Auth, household onboarding, transactional database persistence and private attachments. Server migration activation and production acceptance remain required before readiness claims. The specification below is historical; old phase, sync, financial-model and readiness claims must not be interpreted as current implementation.
 
 # Little Journey — Project Snapshot
 

@@ -21,8 +21,9 @@ interface DashboardViewProps {
   appointments: Appointment[];
   budgetSummary: BudgetCalculationResult;
   stage: JourneyStage;
-  pregnancyMetrics: DerivedPregnancyMetrics;
-  pregnancyDueDate: string;
+  pregnancyMetrics?: DerivedPregnancyMetrics;
+  pregnancyDueDate?: string;
+  isDemo?: boolean;
   isBudgetConfigured: boolean;
 }
 
@@ -37,6 +38,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   stage,
   pregnancyMetrics,
   pregnancyDueDate,
+  isDemo = true,
   isBudgetConfigured,
 }) => {
   // Counts & Amounts
@@ -69,7 +71,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* LEFT COLUMN (7 COLS ON DESKTOP): Journey Hero, Budget Pulse, Readiness */}
         <div className="lg:col-span-7 space-y-4">
           {/* 1. JOURNEY HERO (Architectural seam; renders PregnancyHero for active stage) */}
-          <JourneyHero stage={stage} pregnancyMetrics={pregnancyMetrics} demoDueDate={pregnancyDueDate} />
+          {pregnancyMetrics && pregnancyDueDate ? <JourneyHero stage={stage} pregnancyMetrics={pregnancyMetrics} demoDueDate={pregnancyDueDate} isDemo={isDemo}/> : <section className="rounded-[30px] bg-gradient-to-br from-[#34236B] to-[#6C4CF5] p-6 text-white"><h1 className="text-2xl font-black">Perjalanan keluarga</h1><p className="mt-2 text-sm text-white/80">Catat kebutuhan, pengeluaran, dan jadwal keluarga di sini.</p></section>}
 
           {/* 2. BUDGET OVERVIEW (3-Second Financial Clarity in IDR) */}
           <section 
@@ -163,7 +165,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="bg-[#FAF8F5] p-3 rounded-2xl border border-[#F0ECE4]">
                 <span className="text-[11px] font-bold text-[#79738E] block">Fokus Tahapan</span>
                 <span className="text-base font-black text-[#6C4CF5]">
-                  Demo • Trimester {pregnancyMetrics.trimester}
+                  {pregnancyMetrics?`${isDemo?'Demo • ':''}Trimester ${pregnancyMetrics.trimester}`:'Keluarga'}
                 </span>
               </div>
             </div>

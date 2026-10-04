@@ -1,5 +1,29 @@
 # Database Phase 2 — prepared, not deployed
 
+## Current rollout — MVP persistence (4 October 2026)
+
+The user has executed the first migration and confirmed 11 RLS-enabled tables.
+Run **only the new migration** in the same project's SQL Editor:
+`migrations/202610040001_mvp_persistence.sql` (new query, paste full file, Run).
+It is additive: creates setup/load/save RPCs, validates tenant file paths and adds
+private family-files bucket policies (10 MB file limit). It does not reset tables,
+seed personal data or change Google credentials. Do not rerun the first migration.
+The transaction fails as a whole if existing/conflicting objects prevent creation.
+
+After Success, deploy current main on Cloudflare. Sign in, set up a household,
+create a small test record, reload, then verify editing/deletion and file upload,
+reload/view and removal. Actual live acceptance is required before readiness claims.
+
+Local verification also runs `node supabase/tests/persistence.test.mjs`: 9 groups
+cover idempotent setup, save/reload, failed purchase rollback, explicit zero,
+stale version rejection, reversal/history, active member access, tenant file
+isolation and operation whitelisting. PostgreSQL/Storage schema stubs are local;
+they do not certify the real Supabase Storage HTTP service or OAuth session.
+
+Uploads follow [Supabase Storage RLS](https://supabase.com/docs/guides/storage/security/access-control),
+using household folders, insert without overwrite, and private signed views.
+No service-role key is used in the frontend. The older phase notes follow.
+
 First migration: migrations/202610030001_household_schema.sql.
 11 tables, tenant-safe references, RLS/grants, timestamp/identity guards,
 last-owner protection, atomic household bootstrap, deferred purchase consistency.

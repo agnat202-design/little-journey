@@ -26,7 +26,7 @@ export function buyShopping(records: FamilyRecords, id: string, price: number, d
   if (!item || !isShoppingPrice(price) || !isRecordDate(date)) return records;
   const existing = records.expenses.find(e => e.shoppingItemId === id);
   const expense: Expense = {
-    ...existing, id: existing?.id || `purchase-${crypto.randomUUID()}`, householdId: item.householdId,
+    ...existing, id: existing?.id || crypto.randomUUID(), householdId: item.householdId,
     childId: item.childId, stage: item.stage, shoppingItemId: id, source: 'shopping',
     title: item.item, category: item.category || 'Other', totalAmount: price, paidAmount: price,
     paymentStatus: 'Paid', expenseDate: date,

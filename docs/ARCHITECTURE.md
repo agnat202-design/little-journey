@@ -1,19 +1,27 @@
 # Little Journey — Architecture / Final Phase 1A.1 decisions
 
-## Phase 4 implementation update (current source)
+## MVP persistence implementation update (current source, 4 October 2026)
 
-Google sign-in/sign-up, PKCE callback handling, session restoration and local
-logout now wrap the frontend. Signed-out users see a login screen; signed-in
-users still see explicitly labelled prototype records with no database
-persistence. Account changes remount the frontend to clear ephemeral records.
-Google provider activation remains an account-owner action. See
-[GOOGLE_AUTH.md](GOOGLE_AUTH.md). The historical deployed boundary below describes
-the pre-Auth checkpoint; it is not a claim about the current source.
+Google sign-in/sign-up, PKCE, restored sessions and local logout wrap a household
+gate. setup_household atomically creates own profile/household/owner membership
+and optional Pregnancy, guarded against duplicate bootstrap. Existing memberships
+load/select authorized households. load_household returns a consistent snapshot.
+App coordinates existing record mutations; HouseholdRepository sends changed
+records through one save_household_changes transaction, protected by a locked
+household version. UI state and success messages update after acknowledgement.
+Uncertain/stale writes require reload; no blind overwrite or automatic duplicate
+retry. Shopping/Expense changes commit together and deferred linkage is checked.
+Private family-files uploads precede metadata commit; failed writes remove their
+new upload, obsolete files are removed after success and cleanup failures exposed.
+Attachment views obtain five-minute signed URLs. Real HPL is user input; metrics
+derived at render time. No persisted metrics or production demo pregnancy.
+This requires the second SQL migration and production save/reload testing; see
+[PRM.md](PRM.md) and [supabase/README.md](../supabase/README.md).
 
-Frontend deployed on Cloudflare Pages; backend DESIGN ONLY. Supersedes old claims
-that Supabase Auth, database, Storage and realtime were already connected.
+The following sections retain the historical design checkpoint. They do not
+describe current code or claim that real-time subscriptions are implemented.
 
-## Current deployed boundary
+## Historical pre-Auth boundary
 
 Vite frontend served by Cloudflare. React useState holds operational records,
 Budget/configured flag and optional category allocations for one page session.

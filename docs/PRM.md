@@ -5,9 +5,11 @@ This status supersedes historical prototype completion claims in older documents
 
 ## Readiness verdict
 
-NOT READY for durable entry of real family records. Supabase Auth is connected,
-but operational frontend records are not connected to database reads/writes.
-Creating database tables does not automatically persist frontend form entries.
+ROLLOUT IN PROGRESS. Operational persistence and private uploads are implemented
+and locally tested. The second migration must be activated in the real Supabase
+project, the frontend deployed, and production save/reload/attachment QA verified
+before declaring readiness for important family data. Google login success was
+demonstrated in the user's screenshot. Do not confuse local SQL tests with live QA.
 
 ## Current status
 
@@ -17,25 +19,30 @@ Creating database tables does not automatically persist frontend form entries.
 | Branding | Original SVG logo, favicon, responsive Google login screen | Human acceptance |
 | Database | Household schema migration; 11 tables and RLS confirmed by user screenshots | Live authenticated authorization/integration tests |
 | Authentication | Google OAuth/PKCE, session restoration, local logout, account state reset; Google provider Enabled confirmed by screenshot | Successful deployed login, reload/session restoration and logout still require end-to-end confirmation |
-| Household | Schema and atomic create_household RPC | Profile creation, household onboarding and selecting household context |
-| Pregnancy | Clearly labelled demo | Real due-date setup and derived metrics; no stored gestational snapshots |
-| Tasks | Frontend add/complete | Household-scoped database reads/writes |
-| Shopping | Frontend add/edit/delete, reference link, purchase/reversal flows | Database persistence and atomic Shopping/Expense operations |
-| Expenses | Frontend history/add/edit/delete, linked purchase consistency | Database persistence; actual spending exclusively from Expenses |
-| Budget | Frontend total budget, actual spending and optional category settings | Persist household budget/settings and calculate from persisted Expenses |
-| Appointments | Frontend add/edit/delete; selected date/time; no cost | Database persistence |
-| Documents and receipts | Frontend local file metadata, preview and CRUD | Private Supabase Storage, household access checks, metadata persistence |
+| Household | Atomic profile/household/owner bootstrap; membership discovery and explicit household selection | Activate migration and verify real setup |
+| Pregnancy | User HPL setup/edit; derived metrics; neutral family hero without HPL | Verify real saved HPL reload |
+| Tasks | Add/complete backed by transactional household persistence | Production save/reload QA; edit/delete not currently exposed |
+| Shopping | Add/edit/delete/link/buy/reverse; atomic Expense linkage and version conflict handling | Production save/reload and reconciliation QA |
+| Expenses | Persistent history/add/edit/delete and linked purchase consistency | Production save/reload QA; Expenses alone drive actual spend |
+| Budget | Household total and optional category allocation persistence | Production save/reload and total reconciliation QA |
+| Appointments | Persistent CRUD, date/optional time, no cost | Production save/reload QA |
+| Documents and receipts | Private upload, metadata CRUD, signed view URLs, upload/file-delete cleanup | Activate bucket/policies and verify live upload/view/reload/delete |
 
 ## Data durability boundary
 
 - Login session is persisted by Supabase Auth in the browser.
-- Tasks, Shopping, Expenses, Budget, Appointments and Documents currently use React
-  state. They reset on page reload and when the operational app unmounts on logout.
-- Attachments use temporary browser file/blob references, not uploaded storage.
+- React state holds the last acknowledged household snapshot, loaded from Supabase
+  after login/reload. Changed records save through one atomic, version-checked RPC.
+- Selected files use a temporary browser preview until uploaded. Database records
+  contain private Storage paths, not blob URLs or files. Signed URLs are temporary
+  view access, not permanent public sharing links.
 - Operational screens must not claim cloud synchronization or durable record saves.
 - Do not advise real record entry until save -> reload -> retrieve is verified.
 
-## Next implementation milestones
+## Activation / acceptance milestones
+
+Implementation of milestones 2–5 below is complete in source. Server activation
+and production acceptance remain pending; no Play Store or monetization added.
 
 1. Verify deployed Google sign-in, session restoration and logout.
 2. Implement profile and household bootstrap/onboarding with owner membership.

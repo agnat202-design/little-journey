@@ -2,8 +2,9 @@
 
 > Current roadmap (4 October 2026): see [PRM.md](PRM.md). Frontend QA,
 > GitHub baseline, Cloudflare hosting, schema/RLS and Google Auth implementation
-> are complete. Deployed login still needs end-to-end confirmation. Household
-> onboarding, operational persistence and private attachment storage are pending.
+> are complete. Household onboarding, operational persistence and private
+> attachment storage are implemented in source; migration activation and live
+> save/reload acceptance remain pending.
 > The phase checklist below is historical and superseded by PRM.md.
 
 Status Legend:

@@ -234,11 +234,12 @@ export function calculateGestationalAge(
   const now = new Date(referenceDate);
 
   const diffMs = edd.getTime() - now.getTime();
-  const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+  const signedDaysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  const daysRemaining = Math.max(0, signedDaysRemaining);
 
   // Standard full-term human gestation: 280 days (40 weeks)
-  const daysPregnant = Math.max(0, 280 - daysRemaining);
-  const currentWeek = Math.min(42, Math.floor(daysPregnant / 7));
+  const daysPregnant = Math.max(0, 280 - signedDaysRemaining);
+  const currentWeek = Math.floor(daysPregnant / 7);
   const currentDay = daysPregnant % 7;
 
   let trimester: 1 | 2 | 3 = 1;

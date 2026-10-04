@@ -16,7 +16,8 @@ export function AttachmentPicker({ value, onChange, required = false }: { value?
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      onChange({ id: crypto.randomUUID(), name: file.name, mimeType: file.type, size: file.size, localUrl: URL.createObjectURL(file) });
+      if(file.size>10485760) {setError('Ukuran file maksimal 10 MB.');return;}
+      onChange({ id: crypto.randomUUID(), name: file.name, mimeType: file.type || 'application/octet-stream', size: file.size, localUrl: URL.createObjectURL(file), file });
       setError('');
     } catch { setError('File tidak dapat dibuka. Silakan pilih ulang.'); }
     e.target.value = '';
@@ -29,12 +30,12 @@ export function AttachmentPicker({ value, onChange, required = false }: { value?
     </div>
     {value && <div className="flex items-center gap-2 text-xs"><span className="font-bold text-[#292442] break-all">{value.name}</span><button type="button" onClick={() => onChange(undefined)} className="text-[#79738E] underline">Hapus file</button></div>}
     {error && <p role="alert" className="text-xs text-[#E05342]">{error}</p>}
-    <p className="text-[11px] text-[#79738E]">File disimpan sementara di sesi ini dan hilang saat halaman dimuat ulang.</p>
+    <p className="text-[11px] text-[#79738E]">Maksimal 10 MB. File diunggah saat catatan disimpan.</p>
   </div>;
 }
 
 export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSave, onCancel }: {
-  kind: EntryKind; initial?: any; stage?: JourneyStage; onSave: (data: any) => void; onCancel?: () => void;
+  kind: EntryKind; initial?: any; stage?: JourneyStage; onSave: (data: any) => void | boolean | Promise<boolean>; onCancel?: () => void;
 }) {
   const [title, setTitle] = useState(initial.title ?? initial.item ?? initial.purpose ?? '');
   const [brand, setBrand] = useState(initial.brand || '');
@@ -72,11 +73,13 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
   const field = (id: string, label: string, value: string, update: (value: string) => void, type = 'text', required = false) => <div><label htmlFor={id} className={labelClass}>{label}{required ? ' *' : ''}</label><input id={id} type={type} required={required} min={type === 'number' ? 0 : undefined} step={type === 'number' ? 1 : undefined} value={value} onChange={e => update(e.target.value)} className={fieldClass} /></div>;
   return <form className="space-y-4" onSubmit={e => {
     e.preventDefault(); if (!valid) return; setSaving(true);
-    onSave({ title: title.trim(), brand: brand.trim() || undefined, model: model.trim() || undefined,
+    const result = onSave({ title: title.trim(), brand: brand.trim() || undefined, model: model.trim() || undefined,
       estimatedPrice: optionalPrice, amount: paid, category, appointmentDate: date, expenseDate: date, documentDate: date || undefined,
       appointmentTime: time || undefined, doctor: doctor.trim(), hospital: hospital.trim(), notes: notes.trim() || undefined,
       targetDate: targetDate || undefined, targetGestationalWeek: stage === 'pregnancy' && week ? Number(week) : undefined,
       productUrl: url.trim() || undefined, attachment, documentType, actualPurchasePrice: actual, purchaseDate });
+    if(result instanceof Promise) void result.then(ok=>{if(!ok)setSaving(false);}).catch(()=>setSaving(false));
+    else if(result===false)setSaving(false);
   }}>
     {kind === 'document' && <div><label htmlFor="document-type" className={labelClass}>Jenis Dokumen *</label><select id="document-type" value={documentType} onChange={e => setDocumentType(e.target.value)} className={fieldClass}>{documentTypes.map(t => <option key={t}>{t}</option>)}</select></div>}
     {field('record-title', kind === 'shopping' ? 'Nama Barang' : kind === 'appointment' ? 'Tujuan / Nama Kontrol' : kind === 'expense' ? 'Uraian Pengeluaran' : 'Judul', title, setTitle, 'text', true)}
@@ -104,7 +107,7 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
   </form>;
 }
 
-export function RecordEditor({ kind, record, stage, onSave, onClose }: { kind: EntryKind; record?: any; stage: JourneyStage; onSave: (data: any) => void; onClose: () => void }) {
+export function RecordEditor({ kind, record, stage, onSave, onClose }: { kind: EntryKind; record?: any; stage: JourneyStage; onSave: (data: any) => void | boolean | Promise<boolean>; onClose: () => void }) {
   return <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center sm:p-4"><div className="absolute inset-0" onClick={onClose} /><div role="dialog" aria-modal="true" aria-labelledby="record-editor-title" className="relative w-full max-w-lg bg-white rounded-t-[32px] sm:rounded-[32px] p-5 sm:p-6 max-h-[92vh] overflow-y-auto border border-[#F0ECE4] shadow-2xl"><div className="flex items-center justify-between mb-4"><h2 id="record-editor-title" className="text-xl font-black text-[#292442]">{record ? 'Edit' : 'Tambah'} {kind === 'shopping' ? 'Barang' : kind === 'expense' ? 'Pengeluaran' : kind === 'appointment' ? 'Jadwal' : 'Dokumen'}</h2><button aria-label="Tutup" onClick={onClose} className="p-2 rounded-full bg-[#F5F3ED] text-[#79738E]">✕</button></div><RecordEntryForm kind={kind} initial={record} stage={stage} onSave={onSave} onCancel={onClose} /></div></div>;
 }
 

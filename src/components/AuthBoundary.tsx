@@ -1,9 +1,11 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../lib/supabase';
 import { readSupabaseConfiguration } from '../lib/supabaseConfig';
+import HouseholdGate from './HouseholdGate';
+import App from '../App';
 
-export default function AuthBoundary({ children }: { children: ReactNode }) {
+export default function AuthBoundary() {
   const [client] = useState<SupabaseClient | null>(() => {
     try { return getSupabaseClient(); } catch { return null; }
   });
@@ -77,15 +79,15 @@ export default function AuthBoundary({ children }: { children: ReactNode }) {
   // Remount the prototype for each account: ephemeral family records cannot leak between logins.
   if (session) return <div key={session.user.id}>
     <div className="bg-[#E8F5EF] px-4 py-2 text-center text-sm text-[#292442]">
-      Login berhasil. Data keluarga masih prototipe dan belum tersimpan ke akun.
+      Little Journey
       <button onClick={logout} disabled={busy} className="ml-3 underline font-bold disabled:opacity-50">{busy ? 'Memproses…' : 'Keluar'}</button>
       {error && <p role="alert">{error}</p>}
     </div>
-    {children}
+    <HouseholdGate client={client!} user={session.user}>{runtime=><App runtime={runtime}/>}</HouseholdGate>
   </div>;
 
   return <main className="min-h-svh bg-[#FCFBF8] text-[#292442] lg:grid lg:grid-cols-2">
-    <section className="relative overflow-hidden bg-[#292442] px-7 pt-8 pb-20 text-[#FCFBF8] lg:flex lg:min-h-svh lg:flex-col lg:justify-between lg:p-14">
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#34236B] via-[#452D8A] to-[#6C4CF5] px-7 pt-8 pb-20 text-[#FCFBF8] lg:flex lg:min-h-svh lg:flex-col lg:justify-between lg:p-14">
       <div className="relative z-10 flex items-center gap-3">
         <img src="/little-journey-mark.svg" alt="" width="44" height="44" className="rounded-2xl border border-white/15" />
         <span className="text-xl font-extrabold tracking-tight">Little Journey<span className="ml-1 text-[#BCE4D0]">.</span></span>
@@ -121,9 +123,6 @@ export default function AuthBoundary({ children }: { children: ReactNode }) {
       <p className="mt-4 text-center text-xs text-[#85758E]">Gunakan akun Google pilihanmu.</p>
       {!client && !loading && <p className="mt-4 text-sm" role="alert">Login belum dikonfigurasi untuk aplikasi ini.</p>}
       {error && <p className="mt-4 text-sm" role="alert">{error}</p>}
-      <div className="mt-8 rounded-2xl bg-[#EEEAF3] px-4 py-3 text-xs leading-relaxed text-[#655B75]">
-        <span className="font-bold">Versi pengembangan</span><br />Data keluarga belum tersimpan ke akun pada tahap ini.
-      </div>
       </div>
     </section>
   </main>;

@@ -205,6 +205,7 @@ export interface LocalAttachment {
   size: number;
   localUrl?: string;
   storagePath?: string;
+  file?: File; // Selected browser file; uploaded before a record is committed.
 }
 
 /**

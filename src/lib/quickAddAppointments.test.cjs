@@ -14,7 +14,7 @@ const React = {
   useMemo: fn => fn(), useEffect() {},
 };
 class TestURL extends URL { static createObjectURL(file) { return `blob:test/${file.name}`; } }
-const compiled = buildSync({ entryPoints: [path.join(__dirname, '../App.tsx')], bundle: true, write: false, format: 'cjs', platform: 'node', jsx: 'transform', tsconfigRaw: { compilerOptions: { jsx: 'react' } }, external: ['react', 'lucide-react'] }).outputFiles[0].text;
+const compiled = buildSync({ entryPoints: [path.join(__dirname, '../App.tsx')], bundle: true, write: false, format: 'cjs', platform: 'node', jsx: 'transform', tsconfigRaw: { compilerOptions: { jsx: 'react' } }, define: { 'import.meta.env':'{}' }, external: ['react', 'lucide-react'] }).outputFiles[0].text;
 const moduleStub = { exports: {} };
 vm.runInNewContext(compiled, { module: moduleStub, exports: moduleStub.exports, require: name => { if (name === 'react') return React; if (name === 'lucide-react') return new Proxy({}, { get: (_, key) => key }); throw new Error(name); }, Date, Intl, URL: TestURL, crypto, setTimeout, clearTimeout });
 const App = moduleStub.exports.default;
@@ -45,24 +45,22 @@ function fillEntry(element, data) { let form = render(element.type, element.prop
 function confirm(label) { const modal = find(app(), n => n.props['aria-labelledby'] === 'confirmation-title'); button(modal, label).props.onClick(); }
 function test(label, fn) { states.clear(); fn(); passed++; console.log(`PASS: ${label}`); }
 
-test('Initial frontend is anonymous, session-local and contains no personal demo records', () => {
+test('Initial empty records contain no invented personal data or misleading session status', () => {
   const root = app();
-  assert.ok(text(root).includes('Prototipe lokal'));
+  assert.ok(!text(root).includes('Prototipe lokal'));
   assert.ok(!/Sarah|Agung|Synced|BBY-772|Kalian terhubung/.test(text(root)));
   const header = component(root, 'TopHeader');
   const headerText = text(render(header.type, header.props));
   assert.ok(headerText.includes('Little Journey')); assert.ok(!/Synced|Sarah|Agung/.test(headerText));
   const sidebar = component(root, 'DesktopSidebar');
   const sidebarText = text(render(sidebar.type, sidebar.props));
-  assert.ok(sidebarText.includes('Demo')); assert.ok(!/Household Aktif|Timeline|Settings|Sarah|Agung/.test(sidebarText));
+  assert.ok(!sidebarText.includes('Demo')); assert.ok(!/Household Aktif|Timeline|Settings|Sarah|Agung/.test(sidebarText));
   const dashboard = view('DashboardView');
   const dashboardTree = render(dashboard.type, dashboard.props);
-  const journey = component(dashboardTree, 'JourneyHero');
-  const heroElement = render(journey.type, journey.props);
-  const heroText = text(render(heroElement.type, heroElement.props));
-  assert.ok(heroText.includes('Demo')); assert.ok(heroText.includes('HPL contoh'));
-  assert.ok(heroText.includes('bukan data kehamilan kamu'));
-  assert.ok(!/Ukuran Bayi|430g|28 cm|Setengah jalan/.test(heroText));
+  assert.equal(dashboard.props.pregnancyMetrics,undefined);
+  assert.equal(dashboard.props.pregnancyDueDate,undefined);
+  assert.ok(text(dashboardTree).includes('Perjalanan keluarga'));
+  assert.ok(!/Demo|HPL contoh|Ukuran Bayi|430g|28 cm|Setengah jalan/.test(text(dashboardTree)));
   assert.equal(dashboard.props.checklistItems.length, 0); assert.equal(dashboard.props.shoppingItems.length, 0);
   assert.equal(dashboard.props.appointments.length, 0); assert.equal(dashboard.props.expenses.length, 0);
   nav('budget'); const budget = view('BudgetView');
@@ -76,11 +74,11 @@ test('Checklist current-week filter uses supplied pregnancy week rather than a f
   nav('checklist'); const list = view('ChecklistView');
   const items = [20, 23, 25].map(week => ({ id: String(week), name: `Task-${week}`, category: 'Medical', targetGestationalWeek: week, status: 'Pending', priority: 'Medium' }));
   let output = render(list.type, { ...list.props, items, currentWeek: 22 });
-  button(output, 'Demo: s/d W22').props.onClick();
+  button(output, 's/d W22').props.onClick();
   output = render(list.type, { ...list.props, items, currentWeek: 22 });
   assert.ok(text(output).includes('Task-20')); assert.ok(!text(output).includes('Task-23'));
   output = render(list.type, { ...list.props, items, currentWeek: 25 });
-  assert.ok(text(output).includes('Task-25')); assert.ok(text(output).includes('Demo: s/d W25'));
+  assert.ok(text(output).includes('Task-25')); assert.ok(text(output).includes('s/d W25'));
 });
 
 test('Record action menu closes before Edit, Delete and extra detail actions', () => {
@@ -274,3 +272,36 @@ test('Budget category totals include all actual Expense categories without doubl
 });
 
 console.log(`UX cleanup integration groups passed: ${passed}; failed: 0`);
+
+async function persistentIntegration() {
+  states.clear();
+  const initial={householdId:crypto.randomUUID(),householdName:'User family',version:'v1',records:{shoppingItems:[],expenses:[],appointments:[],documents:[]},tasks:[],totalBudget:1000000,budgetConfigured:true,allocations:[]};
+  let resolveSave, rejectSave, sent, calls=0;
+  const runtime={initial,save:next=>{calls++;sent=next;return new Promise((resolve,reject)=>{resolveSave=resolve;rejectSave=reject;});}};
+  const persistent=()=>render(App,{runtime});
+  const quick=component(persistent(),'QuickAddBottomSheet');
+  const saving=quick.props.onSaveItem('belanja',{title:'User stroller',estimatedPrice:250000,category:''});
+  assert.equal(component(persistent(),'DashboardView').props.shoppingItems.length,0,'Uncommitted item must not appear as saved');
+  assert.equal(sent.records.shoppingItems[0].householdId,initial.householdId);
+  assert.ok(text(persistent()).includes('Menyimpan'));
+  resolveSave({...sent,version:'v2'});assert.equal(await saving,true);
+  let list=component(persistent(),'ShoppingView');assert.equal(list.props.items.length,1);
+  assert.equal(list.props.items[0].item,'User stroller');
+  const buying=list.props.onBuy(list.props.items[0].id,225000,'2026-10-04');
+  assert.equal(sent.records.shoppingItems[0].status,'Bought');assert.equal(sent.records.expenses.length,1);
+  assert.equal(sent.records.expenses[0].paidAmount,225000);assert.equal(sent.records.expenses[0].shoppingItemId,sent.records.shoppingItems[0].id);
+  assert.equal(component(persistent(),'ShoppingView').props.expenses.length,0);
+  resolveSave({...sent,version:'v3'});assert.equal(await buying,true);
+  list=component(persistent(),'ShoppingView');assert.equal(list.props.expenses.length,1);
+  component(persistent(),'DesktopSidebar').props.onTabChange('home');
+  const dashboard=component(persistent(),'DashboardView');assert.equal(dashboard.props.budgetSummary.actualPaid,225000);
+  assert.equal(dashboard.props.isDemo,false);assert.equal(dashboard.props.pregnancyMetrics,undefined,'No hardcoded pregnancy when HPL absent');
+  const failing=component(persistent(),'QuickAddBottomSheet').props.onSaveItem('jadwal',{title:'Control',appointmentDate:'2026-10-28'});
+  rejectSave({code:'40001'});assert.equal(await failing,false);
+  assert.equal(component(persistent(),'DashboardView').props.appointments.length,0);
+  assert.ok(text(persistent()).includes('Muat ulang'));
+  assert.equal(component(persistent(),'QuickAddBottomSheet').props.onSaveItem('jadwal',{title:'Do not duplicate',appointmentDate:'2026-10-28'}),false);
+  assert.equal(calls,3,'Unknown/stale save must require reload before retry to prevent duplicate entry');
+  console.log('PASS persistent App: commit acknowledgement, atomic purchase/Expense budget, failed-write state and duplicate-retry protection');
+}
+persistentIntegration().catch(error=>{console.error(error);process.exitCode=1;});

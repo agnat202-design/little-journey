@@ -1,3 +1,13 @@
+# Current source update — 4 October 2026
+
+The production entry point now requires Google Auth and HouseholdGate. Household
+records/budget come from load_household; changes persist through a transactional
+RPC. Pregnancy metrics derive only from saved user HPL; absent HPL shows a neutral
+family hero. Files upload to private family-files Storage and views use signed
+URLs. Central demo fixtures remain only for isolated tests/fallback harnesses,
+not authenticated production state. See PRM.md for server activation/live QA.
+The audit below describes the earlier frontend checkpoint.
+
 # Data Provenance Report — 3 October 2026
 
 This report describes the implemented frontend, not future functionality. No Auth,

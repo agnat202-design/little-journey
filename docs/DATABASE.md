@@ -1,5 +1,11 @@
 # SUPABASE SCHEMA DESIGN REPORT — Phase 1A
 
+> Implementation update, 4 October 2026: the first schema/RLS migration was
+> executed by the user. The additive MVP persistence migration implements
+> household setup/load/save RPCs, optimistic concurrency and private Storage
+> access. See [supabase/README.md](../supabase/README.md). The design-time status
+> statements below are historical, not current deployment claims.
+
 Final Phase 1A.1 decisions, 2026-10-03; supersedes V2 and open Phase 1A choices. No SQL, tables, Auth/Storage,
 packages, environments, frontend changes, commit or push. Review before implementation.
 

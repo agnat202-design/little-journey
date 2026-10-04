@@ -6,6 +6,7 @@ interface JourneyHeroProps {
   stage: JourneyStage;
   pregnancyMetrics: DerivedPregnancyMetrics;
   demoDueDate: string;
+  isDemo?: boolean;
 }
 
 /**
@@ -17,6 +18,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({
   stage,
   pregnancyMetrics,
   demoDueDate,
+  isDemo = true,
 }) => {
   switch (stage) {
     case 'pregnancy':
@@ -24,6 +26,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({
       return (
         <PregnancyHero
           demoDueDate={demoDueDate}
+          isDemo={isDemo}
           currentWeek={pregnancyMetrics.currentWeek}
           trimester={pregnancyMetrics.trimester}
           daysRemaining={pregnancyMetrics.daysRemaining}
