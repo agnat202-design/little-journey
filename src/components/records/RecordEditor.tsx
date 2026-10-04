@@ -50,7 +50,6 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
   const [hospital, setHospital] = useState(initial.hospital || '');
   const [notes, setNotes] = useState(initial.notes || '');
   const [targetDate, setTargetDate] = useState(initial.targetDate || '');
-  const [week, setWeek] = useState(String(initial.targetGestationalWeek ?? ''));
   const [url, setUrl] = useState(initial.productUrl || '');
   const [attachment, setAttachment] = useState<LocalAttachment | undefined>(initial.attachment);
   const [documentType, setDocumentType] = useState(initial.documentType || 'USG');
@@ -76,7 +75,7 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
     const result = onSave({ title: title.trim(), brand: brand.trim() || undefined, model: model.trim() || undefined,
       estimatedPrice: optionalPrice, amount: paid, category, appointmentDate: date, expenseDate: date, documentDate: date || undefined,
       appointmentTime: time || undefined, doctor: doctor.trim(), hospital: hospital.trim(), notes: notes.trim() || undefined,
-      targetDate: targetDate || undefined, targetGestationalWeek: stage === 'pregnancy' && week ? Number(week) : undefined,
+      targetDate: targetDate || undefined, targetGestationalWeek: initial.targetGestationalWeek,
       productUrl: url.trim() || undefined, attachment, documentType, actualPurchasePrice: actual, purchaseDate });
     if(result instanceof Promise) void result.then(ok=>{if(!ok)setSaving(false);}).catch(()=>setSaving(false));
     else if(result===false)setSaving(false);
@@ -88,7 +87,7 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
       {field('shopping-estimate', 'Harga Perkiraan (IDR, opsional)', price, setPrice, 'number')}
       {field('shopping-url', 'Link Produk / Referensi (opsional)', url, setUrl, 'url')}
       {url.trim() && !isSafeShoppingUrl(url.trim()) && <p role="alert" className="text-xs text-[#E05342]">Gunakan link HTTP atau HTTPS yang valid.</p>}
-      {field('shopping-target-date', 'Target Tanggal (opsional)', targetDate, setTargetDate, 'date')}
+      {field('shopping-target-date', 'Rencana Beli (tanggal, opsional)', targetDate, setTargetDate, 'date')}
       {isBought && <div className="p-3 rounded-2xl bg-[#F5F3ED] space-y-3">{field('shopping-actual', 'Harga Beli (IDR)', actualPrice, setActualPrice, 'number', true)}{field('shopping-purchase-date', 'Tanggal Beli', purchaseDate, setPurchaseDate, 'date', true)}</div>}
     </>}
     {kind === 'expense' && field('expense-amount', 'Nominal (IDR)', amount, setAmount, 'number', true)}
@@ -100,7 +99,6 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
       {customTime && field('appointment-custom-time', 'Jam lainnya', time, setTime, 'time')}
     </>}
     {(kind === 'shopping' || kind === 'expense') && <div><label htmlFor="record-category" className={labelClass}>Kategori (opsional)</label><select id="record-category" value={category} onChange={e => setCategory(e.target.value)} className={fieldClass}><option value="">Tanpa kategori</option>{visibleCategories.map(c => <option key={c}>{c}</option>)}</select></div>}
-    {stage === 'pregnancy' && kind === 'shopping' && <div><label htmlFor="record-week" className={labelClass}>Target Minggu Kehamilan (opsional)</label><input id="record-week" type="number" min="1" max="42" value={week} onChange={e => setWeek(e.target.value)} className={fieldClass} /></div>}
     <div><label htmlFor="record-notes" className={labelClass}>Catatan (opsional)</label><textarea id="record-notes" rows={2} value={notes} onChange={e => setNotes(e.target.value)} className={fieldClass} /></div>
     {(kind === 'expense' || kind === 'document') && <AttachmentPicker value={attachment} onChange={setAttachment} required={kind === 'document'} />}
     <div className="flex gap-2">{onCancel && <button type="button" onClick={onCancel} className="flex-1 px-4 py-3 rounded-2xl bg-[#F5F3ED] text-[#79738E] font-bold">Batal</button>}<button type="submit" disabled={!valid} className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black disabled:bg-none disabled:bg-[#DDD7CD] disabled:text-[#79738E] cursor-pointer">{initial.id ? 'Simpan Perubahan' : 'Simpan'}</button></div>
