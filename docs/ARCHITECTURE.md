@@ -79,3 +79,19 @@ Dedicated financial RPC integration and multi-connection concurrency verificatio
 remain required before real frontend persistence; deferred constraints reject partial
 purchase writes meanwhile. Generic context deletion currently RESTRICTs until explicit
 unlink, preventing silent history destruction. No household/account deletion API.
+
+## Phase 3 — client configuration, 2026-10-04
+
+User screenshots confirm initial migration execution and 11 public tables with RLS
+active. Live owner/member policy behavior has not yet been verified. Supabase SDK is
+now installed with lazy client initialization and validated public-only Vite variables.
+Local .env.local is ignored, .env.example contains names only. No frontend Auth,
+onboarding or module data persistence added; Demo/session notice remains accurate.
+Cloudflare build variables must be configured separately by the user before hosted
+Auth integration. App records remain ephemeral until later persistence phases.
+
+Phase 3 validation: SDK connection to the supplied project reached REST profiles;
+anonymous access returned 401 / PostgreSQL 42501 as expected. No records read or written.
+This verifies endpoint/public key and anonymous denial, not authenticated membership.
+Frontend tests, configuration tests, TypeScript and build passed. Real local values
+remain in ignored .env.local. Hosted build configuration is user action pending.
