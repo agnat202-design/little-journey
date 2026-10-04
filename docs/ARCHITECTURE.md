@@ -1,5 +1,15 @@
 # Little Journey — Architecture / Final Phase 1A.1 decisions
 
+## Phase 4 implementation update (current source)
+
+Google sign-in/sign-up, PKCE callback handling, session restoration and local
+logout now wrap the frontend. Signed-out users see a login screen; signed-in
+users still see explicitly labelled prototype records with no database
+persistence. Account changes remount the frontend to clear ephemeral records.
+Google provider activation remains an account-owner action. See
+[GOOGLE_AUTH.md](GOOGLE_AUTH.md). The historical deployed boundary below describes
+the pre-Auth checkpoint; it is not a claim about the current source.
+
 Frontend deployed on Cloudflare Pages; backend DESIGN ONLY. Supersedes old claims
 that Supabase Auth, database, Storage and realtime were already connected.
 
