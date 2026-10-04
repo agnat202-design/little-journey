@@ -5,6 +5,12 @@ import { readSupabaseConfiguration } from '../lib/supabaseConfig';
 import HouseholdGate from './HouseholdGate';
 import App from '../App';
 
+function clearLoginErrorUrl() {
+  const url=new URL(window.location.href);const keys=['error','error_code','error_description'];let changed=false;
+  for(const key of keys){if(url.searchParams.has(key)){url.searchParams.delete(key);changed=true;}}
+  const hash=new URLSearchParams(url.hash.slice(1));if(keys.some(key=>hash.has(key))){for(const key of keys)hash.delete(key);url.hash=hash.toString();changed=true;}
+  if(changed)window.history.replaceState(window.history.state,'',url.toString());
+}
 export default function AuthBoundary() {
   const [client] = useState<SupabaseClient | null>(() => {
     try { return getSupabaseClient(); } catch { return null; }
@@ -23,12 +29,13 @@ export default function AuthBoundary() {
     if (!client) { setLoading(false); return; }
     let active = true;
     const { data: { subscription } } = client.auth.onAuthStateChange((_event, next) => {
-      if (active) { setSession(next); setLoading(false); }
+      if (active) { setSession(next); if(next) {setError('');clearLoginErrorUrl();} setLoading(false); }
     });
     client.auth.getSession().then(({ data, error: failure }) => {
       if (!active) return;
       setSession(data.session);
-      if (failure) setError('Login belum berhasil. Silakan coba lagi.');
+      if(data.session){setError('');clearLoginErrorUrl();}
+      else if (failure) setError('Login belum berhasil. Silakan coba lagi.');
       setLoading(false);
     }).catch(() => {
       if (active) { setError('Tidak dapat memeriksa login. Muat ulang halaman untuk mencoba lagi.'); setLoading(false); }
@@ -66,24 +73,18 @@ export default function AuthBoundary() {
   }
 
   async function logout() {
-    if (!client || busy) return;
+    if (!client || busy) return false;
     setBusy(true); setError('');
     try {
       const { error: failure } = await client.auth.signOut({ scope: 'local' });
       if (failure) throw failure;
-      setSession(null);
-    } catch { setError('Belum berhasil keluar. Silakan coba lagi.'); }
+      setSession(null);return true;
+    } catch { return false; }
     finally { setBusy(false); }
   }
 
-  // Remount the prototype for each account: ephemeral family records cannot leak between logins.
   if (session) return <div key={session.user.id}>
-    <div className="bg-[#E8F5EF] px-4 py-2 text-center text-sm text-[#292442]">
-      Little Journey
-      <button onClick={logout} disabled={busy} className="ml-3 underline font-bold disabled:opacity-50">{busy ? 'Memproses…' : 'Keluar'}</button>
-      {error && <p role="alert">{error}</p>}
-    </div>
-    <HouseholdGate client={client!} user={session.user}>{runtime=><App runtime={runtime}/>}</HouseholdGate>
+    <HouseholdGate client={client!} user={session.user}>{runtime=><App runtime={runtime} onLogout={logout}/>}</HouseholdGate>
   </div>;
 
   return <main className="min-h-svh bg-[#FCFBF8] text-[#292442] lg:grid lg:grid-cols-2">

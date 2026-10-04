@@ -31,7 +31,7 @@ import { calculateGestationalAge } from './lib/businessLogic';
 import { TaskEditor } from './components/modals/TaskEditor';
 import { PregnancySetup } from './components/modals/PregnancySetup';
 
-export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
+export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime; onLogout?:()=>Promise<boolean> } = {}) {
   const [reportOpen,setReportOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DesktopNavKey>('home');
   // Active Lifecycle Stage (MVP is 'pregnancy'; future-ready for birth, newborn, etc.)
@@ -197,7 +197,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
         {runtime && <div className="px-4 lg:px-8 py-2"><button onClick={()=>setReportOpen(true)} className="rounded-full border border-[#E9E4DC] bg-white px-4 py-2 text-xs font-bold text-[#6C4CF5]">Download Laporan Bulanan</button></div>}
         {/* Dynamic View Display */}
         <main className="flex-1 py-4 sm:py-6">
-          {activeTab === 'profile' && runtime?.client && runtime?.user && <ProfileView client={runtime.client} user={runtime.user} householdId={runtime.initial.householdId} />}
+          {activeTab === 'profile' && runtime?.client && runtime?.user && <ProfileView client={runtime.client} user={runtime.user} householdId={runtime.initial.householdId} onLogout={onLogout} />}
           {activeTab === 'home' && (
             <DashboardView
               onNavigateTab={(tab) => setActiveTab(tab)}
