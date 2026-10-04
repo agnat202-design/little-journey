@@ -1,3 +1,4 @@
+import { expenseCategories, expenseCategoryLabel } from '../../lib/expenseCategories';
 import React, { useState } from 'react';
 import { LocalAttachment, JourneyStage } from '../../types/domain';
 import { isSafeShoppingUrl, isShoppingPrice } from '../../lib/shopping';
@@ -57,7 +58,7 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
   const [purchaseDate, setPurchaseDate] = useState(initial.purchaseDate || '');
   const [saving, setSaving] = useState(false);
   const isBought = kind === 'shopping' && (initial.status === 'Bought' || initial.status === 'Received');
-  const categoryOptions = kind === 'shopping' ? shoppingCategories : ['Hospital / Delivery', 'Medical', ...shoppingCategories];
+  const categoryOptions = kind === 'shopping' ? shoppingCategories : expenseCategories;
   const visibleCategories = initial.category && !categoryOptions.includes(initial.category)
     ? [initial.category, ...categoryOptions] : categoryOptions;
   const optionalPrice = price.trim() ? Number(price) : undefined;
@@ -98,7 +99,7 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
       <div><label htmlFor="appointment-time-choice" className={labelClass}>Jam (opsional)</label><select id="appointment-time-choice" value={customTime ? 'other' : time} onChange={e => { const other = e.target.value === 'other'; setCustomTime(other); setTime(other ? '' : e.target.value); }} className={fieldClass}><option value="">Tanpa jam</option>{quickTimes.map(t => <option key={t}>{t}</option>)}<option value="other">Lainnya</option></select></div>
       {customTime && field('appointment-custom-time', 'Jam lainnya', time, setTime, 'time')}
     </>}
-    {(kind === 'shopping' || kind === 'expense') && <div><label htmlFor="record-category" className={labelClass}>Kategori (opsional)</label><select id="record-category" value={category} onChange={e => setCategory(e.target.value)} className={fieldClass}><option value="">Tanpa kategori</option>{visibleCategories.map(c => <option key={c}>{c}</option>)}</select></div>}
+    {(kind === 'shopping' || kind === 'expense') && <div><label htmlFor="record-category" className={labelClass}>Kategori (opsional)</label><select id="record-category" value={category} onChange={e => setCategory(e.target.value)} className={fieldClass}><option value="">Tanpa kategori</option>{visibleCategories.map(c => <option key={c} value={c}>{kind === 'expense' ? expenseCategoryLabel(c) : c}</option>)}</select></div>}
     <div><label htmlFor="record-notes" className={labelClass}>Catatan (opsional)</label><textarea id="record-notes" rows={2} value={notes} onChange={e => setNotes(e.target.value)} className={fieldClass} /></div>
     {(kind === 'expense' || kind === 'document') && <AttachmentPicker value={attachment} onChange={setAttachment} required={kind === 'document'} />}
     <div className="flex gap-2">{onCancel && <button type="button" onClick={onCancel} className="flex-1 px-4 py-3 rounded-2xl bg-[#F5F3ED] text-[#79738E] font-bold">Batal</button>}<button type="submit" disabled={!valid} className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black disabled:bg-none disabled:bg-[#DDD7CD] disabled:text-[#79738E] cursor-pointer">{initial.id ? 'Simpan Perubahan' : 'Simpan'}</button></div>

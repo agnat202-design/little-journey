@@ -130,6 +130,13 @@ test('Global + opens neutral and resets after closing', () => {
   assert.ok(text(render(reopened.type, reopened.props)).includes('Pilih jenis catatan untuk mulai.'));
 });
 
+test('Expense categories are five plain choices, optional, with legacy values preserved', () => {
+  const entry=openQuick('Pengeluaran');const form=render(entry.type,entry.props);const select=find(form,n=>n.props.id==='record-category');
+  assert.equal(nodes(select).filter(n=>n.type==='option').length,6);
+  assert.ok(text(select).includes('Kesehatan'));assert.ok(text(select).includes('Kebutuhan bayi'));
+  assert.ok(!text(select).includes('Diapering'));assert.equal(select.props.required,undefined);
+});
+
 test('Appointment required date, quick time, separate doctor/location and notes; no cost', () => {
   const entry = openQuick('Jadwal');
   let form = fillEntry(entry, { 'record-title': 'Kontrol keluarga' });
@@ -273,7 +280,7 @@ test('Shopping Edit displays a category saved through the linked Expense', () =>
   nav('shopping'); list = view('ShoppingView'); list.props.onEdit(list.props.items[0]);
   const entry = entryFromEditor(); const form = render(entry.type, entry.props);
   const category = find(form, n => n.props.id === 'record-category');
-  assert.equal(category.props.value, 'Medical'); assert.ok(text(category).includes('Medical'));
+  assert.equal(category.props.value, 'Medical'); assert.ok(nodes(category).some(n=>n.type==='option' && n.props.value==='Medical'));
   submit(form); assert.equal(view('ShoppingView').props.items[0].category, 'Medical');
   assert.equal(view('ShoppingView').props.expenses.find(e => e.shoppingItemId === item.id).category, 'Medical');
 });
