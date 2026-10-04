@@ -26,6 +26,7 @@ import type { HouseholdRuntime } from './components/HouseholdGate';
 import type { HouseholdSnapshot } from './lib/householdRecords';
 import { persistenceError } from './lib/householdRepository';
 import { calculateGestationalAge } from './lib/businessLogic';
+import { TaskEditor } from './components/modals/TaskEditor';
 import { PregnancySetup } from './components/modals/PregnancySetup';
 
 export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
@@ -42,6 +43,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
   const [records, applyRecords] = useState<FamilyRecords>(() => runtime?.initial.records || ({ shoppingItems: [], expenses: [], appointments: [], documents: [] }));
   const { shoppingItems, expenses, appointments, documents } = records;
   const [editor, setEditor] = useState<{ kind: EntryKind; record?: any } | null>(null);
+  const [taskEditor, setTaskEditor] = useState<ChecklistItem | null>(null);
   const [attachment, setAttachment] = useState<LocalAttachment | null>(null);
   const [expenseDetail, setExpenseDetail] = useState<Expense | null>(null);
   const [confirmation, setConfirmation] = useState<{ title: string; body: string; actions: Array<{ label: string; run: () => void }> } | null>(null);
@@ -212,6 +214,8 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
               currentWeek={pregnancyMetrics?.currentWeek || 0}
               items={checklistItems}
               onToggleItem={handleToggleChecklist}
+              onEditItem={setTaskEditor}
+              onDeleteItem={task => setConfirmation({title:'Hapus Tugas?',body:'Tugas ini akan dihapus dari checklist. Lanjutkan?',actions:[{label:'Hapus Tugas',run:()=>setChecklistItems(prev=>prev.filter(item=>item.id!==task.id))}]})}
               onAddItem={() => setIsQuickAddOpen(true)}
             />
           )}
@@ -295,6 +299,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
         onSaveBudgetSetup={(newBudget, newCats) => commit({totalBudget:newBudget,budgetConfigured:true,allocations:newCats})}
       />
 
+      {taskEditor && <TaskEditor key={taskEditor.id} item={taskEditor} onClose={()=>setTaskEditor(null)} onSave={item=>setChecklistItems(prev=>prev.map(old=>old.id===item.id?item:old),()=>setTaskEditor(null))} />}
       {saving && <div role="status" aria-live="polite" className="fixed inset-0 z-[100] bg-white/60 backdrop-blur-xs flex items-center justify-center"><p className="rounded-2xl bg-white px-6 py-4 shadow-lg font-bold text-[#34236B]">Menyimpan…</p></div>}
     </div>
   );

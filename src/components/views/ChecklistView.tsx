@@ -9,6 +9,8 @@ interface ChecklistViewProps {
   currentWeek: number;
   onToggleItem: (id: string) => void;
   onAddItem: () => void;
+  onEditItem: (item: ChecklistItem) => void;
+  onDeleteItem: (item: ChecklistItem) => void;
 }
 
 export const ChecklistView: React.FC<ChecklistViewProps> = ({
@@ -16,21 +18,13 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
   currentWeek,
   onToggleItem,
   onAddItem,
+  onEditItem,
+  onDeleteItem,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [weekFilter, setWeekFilter] = useState<'all' | 'current' | 'trimester2'>('all');
 
-  const categories = [
-    'All',
-    'Medical',
-    'Hospital / Delivery',
-    'Hospital bag',
-    'Baby clothing',
-    'Feeding',
-    'Travel',
-    'Sleeping',
-    'Documents',
-  ];
+  const categories = [...new Set(items.map(item => item.category).filter(Boolean))].sort();
 
   const filteredItems = items.filter((item) => {
     if (selectedCategory !== 'All' && item.category !== selectedCategory) return false;
@@ -120,36 +114,12 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
         </div>
       </div>
 
-      {/* FIXED HORIZONTAL CATEGORIES CAROUSEL */}
-      <div className="relative -mx-4 px-4">
-        <div 
-          className="flex items-center gap-2 overflow-x-auto py-1 px-4 -mx-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-          role="tablist"
-          aria-label="Filter Kategori Checklist"
-        >
-          {categories.map((cat) => {
-            const isSelected = selectedCategory === cat;
-            const style = CATEGORY_STYLES[cat] || { icon: '📋' };
-            return (
-              <button
-                key={cat}
-                role="tab"
-                aria-selected={isSelected}
-                onClick={() => setSelectedCategory(cat)}
-                className={`shrink-0 whitespace-nowrap min-h-[38px] flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer select-none active:scale-95 ${
-                  isSelected
-                    ? 'bg-[#6C4CF5] text-white shadow-xs ring-2 ring-[#6C4CF5]/20'
-                    : 'bg-white text-[#292442] border border-[#EBE6DC] hover:border-[#6C4CF5]'
-                }`}
-              >
-                {cat !== 'All' && <span className="text-sm">{style.icon}</span>}
-                <span>{cat}</span>
-              </button>
-            );
-          })}
-          <div className="w-3 shrink-0 pointer-events-none" />
-        </div>
-      </div>
+      <label className="block text-xs font-bold text-[#79738E]">Kategori
+        <select aria-label="Filter kategori tugas" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="mt-1 block w-full sm:max-w-xs rounded-2xl border border-[#EBE6DC] bg-white p-3 text-[#292442]">
+          <option value="All">Semua kategori</option>
+          {categories.map(category => <option key={category} value={category}>{category}</option>)}
+        </select>
+      </label>
 
       {/* Checklist Cards List */}
       <div className="space-y-2.5">
@@ -176,8 +146,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
             return (
               <div
                 key={task.id}
-                onClick={() => onToggleItem(task.id)}
-                className={`p-4 rounded-[24px] border transition-all cursor-pointer flex items-start justify-between gap-3 active:scale-99 ${
+                className={`p-4 rounded-[24px] border transition-all flex items-start justify-between gap-3 active:scale-99 ${
                   isDone
                     ? 'bg-[#F9F8F6] border-[#E9E4DC] opacity-75'
                     : 'bg-white border-[#E9E4DC] hover:border-[#6C4CF5] shadow-xs'
@@ -187,6 +156,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                   {/* Touch-Friendly Checkbox */}
                   <button
                     type="button"
+                    onClick={() => onToggleItem(task.id)}
                     className="mt-0.5 p-1 -m-1 text-[#6C4CF5] focus:outline-none shrink-0"
                     aria-label={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
                   >
@@ -224,13 +194,12 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                         </span>
                       )}
 
-                      <span className="text-[10px] font-extrabold text-[#34236B] bg-[#EEE9FF] px-2 py-0.5 rounded-full">
-                        PIC: {task.assignedTo || 'Belum ditentukan'}
-                      </span>
+
                     </div>
                   </div>
                 </div>
 
+                <div className="flex shrink-0 flex-col items-end gap-2">
                 <span
                   className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full shrink-0 ${
                     task.priority === 'High'
@@ -240,6 +209,9 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                 >
                   {task.priority}
                 </span>
+                <button type="button" onClick={() => onEditItem(task)} className="text-xs font-bold text-[#6C4CF5] px-2 py-1">Edit</button>
+                <button type="button" onClick={() => onDeleteItem(task)} className="text-xs font-bold text-[#B14435] px-2 py-1">Hapus</button>
+                </div>
               </div>
             );
           })

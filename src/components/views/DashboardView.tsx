@@ -333,9 +333,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         >
                           {task.name}
                         </p>
-                        <span className="text-[10px] font-bold text-[#79738E]">
-                          PIC: {task.assignedTo || 'Belum ditentukan'}
-                        </span>
                       </div>
                     </div>
 

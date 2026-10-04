@@ -81,6 +81,24 @@ test('Checklist current-week filter uses supplied pregnancy week rather than a f
   assert.ok(text(output).includes('Task-25')); assert.ok(text(output).includes('s/d W25'));
 });
 
+test('Tasks can edit/delete without toggling status and use compact relevant categories', () => {
+  nav('checklist'); let list = view('ChecklistView');
+  list.props.onEditItem({id:'task-qa',householdId:'household',stage:'pregnancy',name:'Original',category:'Medical',status:'Completed',priority:'Medium'});
+  const editor = view('TaskEditor');
+  assert.equal(editor.props.item.name,'Original');
+  editor.props.onSave({...editor.props.item,name:'Changed'});
+  const item = {id:'task-qa',name:'Changed',category:'Medical',status:'Completed',priority:'Medium'};
+  let edited=0,deleted=0,toggled=0;
+  const tree=render(list.type,{...list.props,items:[item],onEditItem:()=>edited++,onDeleteItem:()=>deleted++,onToggleItem:()=>toggled++});
+  button(tree,'Edit').props.onClick();button(tree,'Hapus').props.onClick();
+  assert.equal(edited,1);assert.equal(deleted,1);assert.equal(toggled,0);
+  assert.ok(!text(tree).includes('PIC:'));
+  const selector=find(tree,n=>n.type==='select');
+  assert.equal(nodes(selector).filter(n=>n.type==='option').length,2);
+  assert.ok(!text(selector).includes('Travel'));
+  list.props.onDeleteItem(item);confirm('Hapus Tugas');
+});
+
 test('Record action menu closes before Edit, Delete and extra detail actions', () => {
   const list = newShopping(); const card = render(list.type, list.props);
   const actions = component(card, 'RecordActions'); let edited = 0, deleted = 0;
