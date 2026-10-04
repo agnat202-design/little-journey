@@ -1,4 +1,4 @@
-> Current frontend status (3 October 2026): see [DATA_PROVENANCE.md](DATA_PROVENANCE.md). The older specification below describes historical designs or future plans, not implemented accounts, sharing, synchronization or real household data. Current lists start empty; pregnancy is an explicitly labeled demo. Timeline, Settings and onboarding prototypes have been removed.
+> Current status (4 October 2026): [PRM.md](PRM.md) is the current product status and release gate. Google Auth is connected; operational records and attachments are NOT persisted to Supabase yet. Real family data entry is not ready. The specification below is historical; old phase, sync, financial-model and readiness claims must not be interpreted as current implementation.
 
 # Little Journey — Project Snapshot
 
