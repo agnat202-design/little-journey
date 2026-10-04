@@ -215,7 +215,7 @@ export default function App({ runtime }: { runtime?: HouseholdRuntime } = {}) {
               items={checklistItems}
               onToggleItem={handleToggleChecklist}
               onEditItem={setTaskEditor}
-              onDeleteItem={task => setConfirmation({title:'Hapus Tugas?',body:'Tugas ini akan dihapus dari checklist. Lanjutkan?',actions:[{label:'Hapus Tugas',run:()=>setChecklistItems(prev=>prev.filter(item=>item.id!==task.id))}]})}
+              onDeleteItem={task => setConfirmation({title:'Hapus Checklist?',body:'Item ini akan dihapus dari checklist. Lanjutkan?',actions:[{label:'Hapus Checklist',run:()=>setChecklistItems(prev=>prev.filter(item=>item.id!==task.id))}]})}
               onAddItem={() => setIsQuickAddOpen(true)}
             />
           )}

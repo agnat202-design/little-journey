@@ -70,15 +70,13 @@ test('Initial empty records contain no invented personal data or misleading sess
   nav('documents'); assert.equal(view('DocumentsView').props.documents.length, 0);
 });
 
-test('Checklist current-week filter uses supplied pregnancy week rather than a fixed W24', () => {
-  nav('checklist'); const list = view('ChecklistView');
-  const items = [20, 23, 25].map(week => ({ id: String(week), name: `Task-${week}`, category: 'Medical', targetGestationalWeek: week, status: 'Pending', priority: 'Medium' }));
-  let output = render(list.type, { ...list.props, items, currentWeek: 22 });
-  button(output, 's/d W22').props.onClick();
-  output = render(list.type, { ...list.props, items, currentWeek: 22 });
-  assert.ok(text(output).includes('Task-20')); assert.ok(!text(output).includes('Task-23'));
-  output = render(list.type, { ...list.props, items, currentWeek: 25 });
-  assert.ok(text(output).includes('Task-25')); assert.ok(text(output).includes('s/d W25'));
+test('Checklist has no gestational timing controls', () => {
+  nav('checklist'); const list=view('ChecklistView');const tree=render(list.type,list.props);
+  assert.ok(!/Semua Minggu|Target Trimester|s/d W/.test(text(tree)));
+  component(app(),'DesktopSidebar').props.onQuickAdd();const sheet=view('QuickAddBottomSheet');const shell=render(sheet.type,sheet.props);let body=render(shell.type,shell.props);
+  button(body,'Checklist').props.onClick();body=render(shell.type,shell.props);
+  assert.ok(text(body).includes('Simpan Checklist'));assert.ok(!text(body).includes('Target Minggu'));
+  assert.ok(!nodes(body).some(n=>n.props.id==='task-week'));
 });
 
 test('Tasks can edit/delete without toggling status and use compact relevant categories', () => {
@@ -96,7 +94,7 @@ test('Tasks can edit/delete without toggling status and use compact relevant cat
   const selector=find(tree,n=>n.type==='select');
   assert.equal(nodes(selector).filter(n=>n.type==='option').length,2);
   assert.ok(!text(selector).includes('Travel'));
-  list.props.onDeleteItem(item);confirm('Hapus Tugas');
+  list.props.onDeleteItem(item);confirm('Hapus Checklist');
 });
 
 test('Record action menu closes before Edit, Delete and extra detail actions', () => {

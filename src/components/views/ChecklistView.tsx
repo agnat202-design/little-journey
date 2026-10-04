@@ -22,15 +22,11 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
   onDeleteItem,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [weekFilter, setWeekFilter] = useState<'all' | 'current' | 'trimester2'>('all');
 
   const categories = [...new Set(items.map(item => item.category).filter(Boolean))].sort();
 
   const filteredItems = items.filter((item) => {
     if (selectedCategory !== 'All' && item.category !== selectedCategory) return false;
-    const week = item.targetGestationalWeek;
-    if (weekFilter === 'current' && week && week > currentWeek) return false;
-    if (weekFilter === 'trimester2' && week && (week < 14 || week > 27)) return false;
     return true;
   });
 
@@ -50,10 +46,10 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
               Kesiapan Keluarga
             </span>
             <h1 className="text-xl sm:text-2xl font-black text-[#292442] mt-1.5">
-              Checklist Perlengkapan & Tugas
+              Checklist
             </h1>
             <p className="text-xs sm:text-sm font-bold text-[#79738E] mt-0.5">
-              {completedCount} dari {items.length} tugas selesai ({progressPercent}%)
+              {completedCount} dari {items.length} item selesai ({progressPercent}%)
             </p>
           </div>
           <PipMascot mood={progressPercent > 50 ? 'celebrate' : 'happy'} size={60} />
@@ -67,55 +63,8 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
         </div>
       </section>
 
-      {/* FIXED HORIZONTAL WEEK FILTER CHIPS */}
-      <div className="relative -mx-4 px-4">
-        <div 
-          className="flex items-center gap-2 overflow-x-auto py-1 px-4 -mx-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-          role="tablist"
-          aria-label="Filter Minggu Kehamilan"
-        >
-          <button
-            role="tab"
-            aria-selected={weekFilter === 'all'}
-            onClick={() => setWeekFilter('all')}
-            className={`shrink-0 whitespace-nowrap min-h-[38px] px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer select-none active:scale-95 ${
-              weekFilter === 'all'
-                ? 'bg-[#34236B] text-white shadow-xs'
-                : 'bg-white text-[#79738E] border border-[#EBE6DC] hover:text-[#292442]'
-            }`}
-          >
-            Semua Minggu
-          </button>
-          <button
-            role="tab"
-            aria-selected={weekFilter === 'current'}
-            onClick={() => setWeekFilter('current')}
-            className={`shrink-0 whitespace-nowrap min-h-[38px] px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer select-none active:scale-95 ${
-              weekFilter === 'current'
-                ? 'bg-[#34236B] text-white shadow-xs'
-                : 'bg-white text-[#79738E] border border-[#EBE6DC] hover:text-[#292442]'
-            }`}
-          >
-            {currentWeek ? `s/d W${currentWeek}` : 'HPL belum diatur'}
-          </button>
-          <button
-            role="tab"
-            aria-selected={weekFilter === 'trimester2'}
-            onClick={() => setWeekFilter('trimester2')}
-            className={`shrink-0 whitespace-nowrap min-h-[38px] px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer select-none active:scale-95 ${
-              weekFilter === 'trimester2'
-                ? 'bg-[#34236B] text-white shadow-xs'
-                : 'bg-white text-[#79738E] border border-[#EBE6DC] hover:text-[#292442]'
-            }`}
-          >
-            Target Trimester 2
-          </button>
-          <div className="w-3 shrink-0 pointer-events-none" />
-        </div>
-      </div>
-
       <label className="block text-xs font-bold text-[#79738E]">Kategori
-        <select aria-label="Filter kategori tugas" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="mt-1 block w-full sm:max-w-xs rounded-2xl border border-[#EBE6DC] bg-white p-3 text-[#292442]">
+        <select aria-label="Filter kategori checklist" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="mt-1 block w-full sm:max-w-xs rounded-2xl border border-[#EBE6DC] bg-white p-3 text-[#292442]">
           <option value="All">Semua kategori</option>
           {categories.map(category => <option key={category} value={category}>{category}</option>)}
         </select>
@@ -126,16 +75,16 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
         {filteredItems.length === 0 ? (
           <div className="bg-white rounded-[28px] p-8 text-center border border-[#F0ECE4]">
             <PipMascot mood="sleeping" size={72} className="mx-auto mb-2" />
-            <h2 className="text-base font-black text-[#292442]">Belum ada tugas di kategori ini</h2>
+            <h2 className="text-base font-black text-[#292442]">Belum ada checklist di kategori ini</h2>
             <p className="text-xs font-bold text-[#79738E] mt-1 max-w-[240px] mx-auto">
-              Tambahkan tugas pertama untuk mempersiapkan kebutuhan buah hati!
+              Tambahkan checklist pertama untuk mempersiapkan kebutuhan buah hati!
             </p>
             <button
               onClick={onAddItem}
               className="mt-4 px-5 py-2.5 rounded-full bg-[#EEE9FF] text-[#6C4CF5] font-extrabold text-xs inline-flex items-center gap-1.5 shadow-xs active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              Tambah Tugas
+              Tambah Checklist
             </button>
           </div>
         ) : (
@@ -187,12 +136,6 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                         <span>{catStyle.icon}</span>
                         <span>{task.category}</span>
                       </span>
-
-                      {task.targetGestationalWeek && (
-                        <span className="text-[10px] font-extrabold text-[#79738E] bg-[#F5F3ED] px-2 py-0.5 rounded-full">
-                          Target W{task.targetGestationalWeek}
-                        </span>
-                      )}
 
 
                     </div>

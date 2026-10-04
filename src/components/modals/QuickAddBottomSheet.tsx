@@ -25,7 +25,6 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
   
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Pregnancy');
-  const [targetGestationalWeek, setTargetGestationalWeek] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSaving,setIsSaving] = useState(false);
   const save = (type:QuickAddType,data:any) => {
@@ -108,7 +107,7 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
             }`}
           >
             <CheckSquare className="w-4 h-4 mb-1" />
-            Tugas
+            Checklist
           </button>
 
           <button
@@ -129,11 +128,10 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
         {selectedType === null ? (
           <p className="text-sm font-bold text-[#79738E] text-center py-3">Pilih jenis catatan untuk mulai.</p>
         ) : selectedType === 'tugas' ? (
-          <form className="space-y-4" onSubmit={e => { e.preventDefault(); if (!title.trim() || isSuccess || isSaving) return; void save('tugas', { title: title.trim(), category, targetGestationalWeek: activeStage === 'pregnancy' && targetGestationalWeek ? Number(targetGestationalWeek) : undefined }); }}>
-            <div><label htmlFor="task-title" className={labelClass}>Nama Checklist / Tugas *</label><input id="task-title" required autoFocus value={title} onChange={e => setTitle(e.target.value)} className={fieldClass} /></div>
+          <form className="space-y-4" onSubmit={e => { e.preventDefault(); if (!title.trim() || isSuccess || isSaving) return; void save('tugas', { title: title.trim(), category }); }}>
+            <div><label htmlFor="task-title" className={labelClass}>Nama Checklist *</label><input id="task-title" required autoFocus value={title} onChange={e => setTitle(e.target.value)} className={fieldClass} /></div>
             <div><label htmlFor="task-category" className={labelClass}>Kategori</label><select id="task-category" value={category} onChange={e => setCategory(e.target.value)} className={fieldClass}>{['Pregnancy', 'Mother', 'Hospital bag', 'Baby clothing', 'Feeding', 'Documents', 'Medical', 'Other'].map(c => <option key={c}>{c}</option>)}</select></div>
-            {activeStage === 'pregnancy' && <div><label htmlFor="task-week" className={labelClass}>Target Minggu Kehamilan (opsional)</label><input id="task-week" type="number" min="1" max="42" value={targetGestationalWeek} onChange={e => setTargetGestationalWeek(e.target.value)} className={fieldClass} /></div>}
-            <button disabled={!title.trim() || isSuccess || isSaving} className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black disabled:opacity-40">{isSuccess ? 'Berhasil Dicatat!' : isSaving?'Menyimpan…':'Simpan Tugas'}</button>
+            <button disabled={!title.trim() || isSuccess || isSaving} className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black disabled:opacity-40">{isSuccess ? 'Berhasil Dicatat!' : isSaving?'Menyimpan…':'Simpan Checklist'}</button>
           </form>
         ) : (
           <RecordEntryForm key={selectedType} kind={selectedType === 'belanja' ? 'shopping' : selectedType === 'pengeluaran' ? 'expense' : 'appointment'} stage={activeStage} onSave={data => save(selectedType, data)} />

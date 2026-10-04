@@ -289,7 +289,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           {/* 6. THIS WEEK'S FOCUS CHECKLIST */}
           <section 
-            aria-label="Tugas Tersimpan"
+            aria-label="Checklist Tersimpan"
             className="bg-white rounded-[28px] p-5 border border-[#F0ECE4] shadow-xs"
           >
             <div className="flex items-center justify-between mb-3">
@@ -304,7 +304,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             <div className="space-y-2.5">
-              {checklistItems.length === 0 && <p className="text-xs text-[#79738E]">Belum ada tugas.</p>}
+              {checklistItems.length === 0 && <p className="text-xs text-[#79738E]">Belum ada checklist.</p>}
               {checklistItems.slice(0, 3).map((task) => {
                 const isDone = task.status === 'Completed';
                 return (
