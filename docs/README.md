@@ -8,6 +8,7 @@ Diperbarui: 5 Oktober 2026. Dokumentasi mengikuti kode, bukti deployment, dan ke
 | [PROJECT.md](PROJECT.md) | Ringkasan produk dan teknologi |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Alur frontend, Auth, database, Storage, laporan |
 | [DATABASE.md](DATABASE.md) | Struktur data dan keputusan schema |
+| [MONETIZATION.md](MONETIZATION.md) | Rencana harga/kanal, tetap Supabase Free, backup dan pemicu upgrade |
 | [ROADMAP.md](ROADMAP.md) | Urutan kerja berikutnya, Android, langganan, internasionalisasi |
 | [MVP_PERSISTENCE_QA.md](MVP_PERSISTENCE_QA.md) | Tes yang dijalankan, bukti produksi, bagian belum diverifikasi |
 | [DATA_PROVENANCE.md](DATA_PROVENANCE.md) | Sumber nilai yang ditampilkan |

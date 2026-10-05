@@ -15,7 +15,9 @@ Diperbarui: 5 Oktober 2026. [STATUS](STATUS.md) adalah implementasi saat ini.
 - Jika akun personal baru memenuhi kondisi Google: minimal 12 tester opted-in 14 hari berturut-turut dan pengajuan produksi. Periksa ulang aturan saat submission.
 
 ## 3. Monetisasi
-- Rp10.000/bulan merupakan usulan, uji willingness-to-pay dan biaya operasional.
+- Rencana rinci: [MONETIZATION](MONETIZATION.md). Web berbayar terlebih dahulu setelah validasi; Android lalu App Store.
+- Harga hipotesis terbaru Rp14.900/bulan atau Rp99.000/tahun; promo awal Rp79.000 tahun pertama. Uji willingness-to-pay sebelum menetapkan.
+- Tetap Supabase Free selama kuota dan kebutuhan operasional memungkinkan, termasuk pelanggan awal. Pro tidak wajib sejak awal; backup database dan file terpisah serta uji restore perlu dibuat.
 - Tentukan fitur free/paid, billing model dan negara target dahulu.
 - Integrasi pembayaran yang sesuai kebijakan regional Play, server receipt verification, entitlement, renewal/cancel/restore handling. Bukan sekadar menambahkan tombol bayar.
 - Tidak ada upgrade Supabase/payment purchase yang diotorisasi pada checkpoint ini.

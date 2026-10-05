@@ -38,3 +38,6 @@ Pencatatan keluarga yang sederhana, dapat ditambah/ditemukan/diedit/dihapus, den
 
 ## Batasan tetap
 Tidak ada fake promotions/recommendations/external intelligence. Tidak menyimpan credentials dalam repo. Tidak mengklaim live, historical report, backup lengkap, subscription aktif, atau approval Play Store tanpa bukti. Keputusan product/data deletion/billing dibahas sebelum implementasi yang berisiko.
+
+## Rencana monetisasi — 5 Oktober 2026
+Lihat [MONETIZATION.md](MONETIZATION.md). Prioritas biaya pengguna: tetap Supabase Free untuk MVP/pelanggan awal sesuai kuota, tanpa kewajiban Pro saat pelanggan pertama. Backup database dan foto terpisah, uji restore, monitoring dan kuota keluarga belum lengkap dan menjadi pekerjaan sebelum komitmen layanan berbayar. Harga dan kanal adalah usulan untuk diuji; pembayaran, upgrade, listing Shopee dan submission store belum dilakukan.

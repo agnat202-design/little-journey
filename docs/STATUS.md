@@ -42,3 +42,6 @@ Foto JPG/PNG/WebP baru di atas 400 KB diperkecil sebelum upload (sisi terpanjang
 - 5 Oktober 2026: tombol Tambah Checklist selalu tersedia di atas filter kategori, termasuk saat daftar sudah berisi. Menggunakan alur tambah checklist yang sama.
 
 - 5 Oktober 2026: tambah/edit Checklist memiliki catatan dan target tanggal opsional yang tersimpan melalui target_date. Kartu menampilkan tanggal. Catatan otomatis Catat Cepat tidak lagi dibuat; teks lama disembunyikan dan dikosongkan saat diedit, tanpa menghapus catatan pengguna lain.
+
+## Rencana monetisasi — 5 Oktober 2026
+Lihat [MONETIZATION.md](MONETIZATION.md). Prioritas biaya pengguna: tetap Supabase Free untuk MVP/pelanggan awal sesuai kuota, tanpa kewajiban Pro saat pelanggan pertama. Backup database dan foto terpisah, uji restore, monitoring dan kuota keluarga belum lengkap dan menjadi pekerjaan sebelum komitmen layanan berbayar. Harga dan kanal adalah usulan untuk diuji; pembayaran, upgrade, listing Shopee dan submission store belum dilakukan.
