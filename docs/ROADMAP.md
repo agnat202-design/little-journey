@@ -1,42 +1,36 @@
-# Development Roadmap V2 (Little Journey)
+# Little Journey — Roadmap
+Diperbarui: 5 Oktober 2026. [STATUS](STATUS.md) adalah implementasi saat ini.
 
-> Current roadmap (4 October 2026): see [PRM.md](PRM.md). Frontend QA,
-> GitHub baseline, Cloudflare hosting, schema/RLS and Google Auth implementation
-> are complete. Household onboarding, operational persistence and private
-> attachment storage are implemented in source; migration activation and live
-> save/reload acceptance remain pending.
-> The phase checklist below is historical and superseded by PRM.md.
+## 1. Stabilkan MVP web
+- Verifikasi deployment terbaru dan production flows Auth/CRUD/attachments/Shopping reverse.
+- Human review preview/PDF mobile dan desktop, termasuk multi-page.
+- Kebutuhan anak lintas umur: terminology sudah netral; lifecycle masih Pregnancy.
+- Lengkapi salinan file/restore strategy; JSON sekarang belum mencakup binary atau import.
+- Dokumentasikan retention/account deletion sebelum implementasi.
 
-Status Legend:
-- `[x]` Completed
-- `[~]` In Progress
-- `[ ]` Pending
+## 2. Distribusi Android
+- Pilih packaging berdasarkan kemampuan web yang ada; belum ada keputusan framework wrapper.
+- Android App Bundle/signing, login callback/session, upload/camera/download QA.
+- Play Console identity/account setup, privacy policy, Data Safety, account deletion in-app/web, health declaration, store listing/screenshots.
+- Jika akun personal baru memenuhi kondisi Google: minimal 12 tester opted-in 14 hari berturut-turut dan pengajuan produksi. Periksa ulang aturan saat submission.
 
----
+## 3. Monetisasi
+- Rp10.000/bulan merupakan usulan, uji willingness-to-pay dan biaya operasional.
+- Tentukan fitur free/paid, billing model dan negara target dahulu.
+- Integrasi pembayaran yang sesuai kebijakan regional Play, server receipt verification, entitlement, renewal/cancel/restore handling. Bukan sekadar menambahkan tombol bayar.
+- Tidak ada upgrade Supabase/payment purchase yang diotorisasi pada checkpoint ini.
 
-## Foundation
-- [x] Phase 0.0 Product Architecture & Scope
-- [x] Phase 0.5 Persistent Documentation Repository (`/docs`)
-- [x] Phase 0.6 Visual Prototype & Original Pip Mascot
-- [x] Phase 0.7 Frontend Prototype + QA (Horizontal filter fix, locked terminology, 2-column desktop composition)
-- [x] Phase 0.8 Architecture V2 — Pregnancy → Age 5 (Decoupled lifecycle, Child entity, JourneyHero seam, zero double-counting budget model, 28/28 tests passing)
-- [ ] Phase 0.9 Architecture Review / Approval
+## 4. Ekspansi
+- Indonesia/English UI dan laporan, currency/date/timezone tanpa perubahan nilai data lama.
+- Schema sekarang currency=IDR; multi-currency membutuhkan keputusan/migration, bukan hanya translate label.
+- Household invite/roles UI; birth/newborn/toddler/preschool workflows. Milestones tetap deferred.
+- Email report otomatis adalah permintaan tahap berikutnya setelah laporan disetujui; belum ada jadwal, provider atau pengiriman.
+- Cicilan/refund, AI/price intelligence bukan scope MVP.
 
----
-
-## MVP — Pregnancy Preparation
-- [ ] Phase 1 Supabase Schema + RLS (Proposed Schema V2: `profiles`, `households`, `household_members`, `children`, `pregnancies`, `checklist_items`, `shopping_items`, `expenses`, `appointments`, `documents`, `milestones`)
-- [ ] Phase 2 Authentication + Household Multi-User Sync
-- [ ] Phase 3 Real Data Integration (Supabase client singleton & real-time subscriptions)
-- [ ] Phase 4 Pregnancy MVP Feature Completion
-- [ ] Phase 5 Production QA & Cross-Browser Verification
-- [ ] Phase 6 Cloudflare Pages Production Deployment
-
----
-
-## Post-MVP (Future Lifecycle Stages)
-- [ ] Birth Transition Module
-- [ ] Newborn Stage (0–3 Months)
-- [ ] Infant Stage (3–12 Months)
-- [ ] Toddler Stage (1–3 Years)
-- [ ] Preschool Stage (3–5 Years)
+## Referensi kebijakan (cek 5 Oktober 2026)
+- Testing: https://support.google.com/googleplay/android-developer/answer/14151465
+- Account deletion: https://support.google.com/googleplay/android-developer/answer/13327111
+- Health: https://support.google.com/googleplay/android-developer/answer/16679511
+- OAuth verification: https://support.google.com/cloud/answer/13463073
+- Subscription fees: https://support.google.com/googleplay/android-developer/answer/112622
+Kebijakan dapat berubah; tautan bukan jaminan aplikasi lolos review.

@@ -1,10 +1,8 @@
-# Little Journey frontend
+# Little Journey
 
-React/Vite household app with Google Auth, household setup, database-backed records,
-transactional Shopping/Expense updates and private attachment uploads. See
-[PRM](docs/PRM.md) for the rollout status. The persistence migration must be applied
-before the new frontend can load household records. Production save/reload QA is
-required before calling the deployment ready for real family data.
+MVP web keluarga dengan Google Auth, Supabase household records, private attachments, Profil, dan laporan bulanan preview/PDF serta ekspor JSON.
+
+Dokumentasi terbaru: [Index](docs/README.md) · [Status produk](docs/STATUS.md) · [PRM](docs/PRM.md) · [Roadmap](docs/ROADMAP.md). Diperbarui 5 Oktober 2026. Data produksi diperiksa; full live QA dan latest deployment verification belum lengkap. Free plan tidak mencakup project backups; JSON bukan backup binary/restore.
 
 ## Run locally
 

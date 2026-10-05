@@ -1,3 +1,5 @@
+> Current checkpoint 5 October 2026: Google provider and both migrations activated by user; real login demonstrated. Logout now in Profil; successful session clears stale OAuth error UI/URL. Full session/logout production regression pending. See [STATUS](STATUS.md). Setup instructions below are reference, not a pending rollout list.
+
 # Google sign-in setup
 
 The frontend supports Google registration/sign-in through Supabase Auth, PKCE,

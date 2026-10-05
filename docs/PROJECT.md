@@ -1,99 +1,19 @@
-> Current status (4 October 2026): [PRM.md](PRM.md) is the current product status and release gate. Source now implements Google Auth, household onboarding, transactional database persistence and private attachments. Server migration activation and production acceptance remain required before readiness claims. The specification below is historical; old phase, sync, financial-model and readiness claims must not be interpreted as current implementation.
+# Little Journey — Ringkasan Produk
+Diperbarui: 5 Oktober 2026.
 
-# Little Journey — Project Snapshot
+Little Journey adalah aplikasi pencatatan dan persiapan keluarga: Checklist, Belanja, Budget/Pengeluaran, Jadwal dan Dokumen. Visi mencakup kehamilan sampai usia anak sekitar 5 tahun; MVP saat ini masih menggunakan Pregnancy sebagai lifecycle aktif.
 
-## 1. Project Goal
-**Little Journey** is a private, warm, family journey application guiding parents from pregnancy preparation through birth and early childhood (approximately age 5). It replaces scattered spreadsheets, disconnected note apps, and mental fatigue with a single real-time household space.
+## Platform dan teknologi
+- Web React 19 / TypeScript 7 / Vite 8 / Tailwind CSS 4.
+- Lucide, Motion, logo SVG Little Journey dan mascot Pip.
+- Supabase Auth Google/PKCE, PostgreSQL/RLS, private Storage.
+- jsPDF + jsPDF-AutoTable: PDF dibuat di browser, dimuat ketika diunduh.
+- Cloudflare Pages; GitHub main menjadi sumber deployment.
+- Mata uang database saat ini IDR; timezone household default Asia/Jakarta.
 
-- **Product Platform**: Little Journey
-- **Current MVP Scope**: Pregnancy Preparation (Trimester 2 until delivery)
-- **Future Lifecycle Scope**: Birth Transition, Newborn (0–3m), Infant (3–12m), Toddler (1–3y), Preschool (3–5y)
+## Sumber kebenaran
+Expenses adalah sumber pengeluaran aktual. Shopping menyimpan estimasi dan menghubungkan pembelian ke satu Expense. Household adalah batas akses; pregnancy/child konteks opsional. Auth credentials tidak digandakan. Nilai week/day/progress dihitung, tidak disimpan.
 
----
-
-## 2. Core Domain Model (Architecture V2)
-The application is **HOUSEHOLD-centric** and **CHILD/JOURNEY-aware**:
-
-```
-HOUSEHOLD
-├── Household Members (Parents / Guardians)
-├── Children (Future-compatible multi-child support)
-└── Journeys & Lifecycle Stages
-    ├── Pregnancy (Active MVP Stage)
-    ├── Birth (Future Stage)
-    ├── Newborn (Future Stage)
-    ├── Infant (Future Stage)
-    ├── Toddler (Future Stage)
-    └── Preschool (Future Stage)
-         ├── Tasks / Checklist
-         ├── Shopping / Procurement
-         ├── Expenses / Financial Obligations
-         ├── Appointments / Healthcare
-         ├── Documents / Vault
-         └── Milestones
-```
-
-**Key Architectural Rule**: Pregnancy is ONE lifecycle stage within Little Journey, NOT the hardcoded root of all application data. Generic operational modules (Checklist, Shopping, Expenses, Appointments, Documents) are decoupled from pregnancy-specific concepts.
-
----
-
-## 3. Tech Stack
-- **Frontend Framework**: React 19 (SPA)
-- **Build Tool**: Vite 8
-- **Language**: TypeScript 5+ (Strict mode)
-- **Styling**: Tailwind CSS v4 (`@tailwindcss/vite`) with custom soft digital object tokens
-- **Icons**: Lucide React
-- **Animations**: Motion (micro-interactions)
-- **Database / Auth / Storage (Target)**: Supabase (PostgreSQL 15+ with Row Level Security)
-- **Hosting / Edge (Target)**: Cloudflare Pages
-- **Repository**: GitHub
-
----
-
-## 4. Locked Budget Business Formulas (Zero Double-Counting)
-
-- **TOTAL BUDGET**: Maximum household budget allocated for the stage/journey.
-- **ESTIMATED / PLANNED**: Expected future cost of unpurchased needs still in planning/wishlist without an active expense ledger record.
-- **COMMITTED**: Financial obligations contracted or ordered (e.g. booked hospital package, ordered stroller) not yet fully settled.
-- **ACTUAL PAID**: Money actually paid out in cash/transfer (primary financial source of truth).
-- **OUTSTANDING**: Committed contract amount remaining to be paid (`committedTotal - paidDeposit`).
-- **PROJECTED FINAL COST**: `Actual Paid + Outstanding Commitments + Estimated Planned`.
-  - *Example*: Hospital estimate Rp 25.000.000, booked at Rp 25.000.000 with Rp 5.000.000 deposit paid.
-  - `Actual Paid` = Rp 5.000.000, `Outstanding` = Rp 20.000.000.
-  - Total projected for hospital = `Rp 5.000.000 + Rp 20.000.000 = Rp 25.000.000` (NEVER counted as Rp 30.000.000).
-- **PROJECTED BUFFER**: `Total Budget - Projected Final Cost`.
-- **REMAINING BUDGET**: `Total Budget - Actual Paid` (Remaining budget headroom from allocated ceiling).
-- **Shopping ➔ Expense Linking**: When a shopping item transitions to `Bought` and links to an expense ledger entry (`expenses.shopping_item_id`), its expenditure is solely accounted for by the expense record.
-
----
-
-## 5. Development Status & Roadmap
-- **Current Phase**: Phase 0.8.2 Budget Input & Setup Complete
-- **Completed Phases**:
-  - Phase 0.0: Initial Product Requirements & Scope
-  - Phase 0.5: Persistent Documentation Suite
-  - Phase 0.6: Approved Visual Direction (Soft digital objects, `#34236B`, `#6C4CF5`, Pip Mascot, Indonesian Rupiah data)
-  - Phase 0.7: Frontend UX QA & Logic Validation
-  - Phase 0.8: Architecture V2 Patch (Decoupled lifecycle, Child entity, JourneyHero seam, zero double-counting budget model)
-  - Phase 0.8.1: Wishlist & Budget Financial Reconciliation & Real-Time Sync
-  - Phase 0.8.2: Budget Input, Setup & Hierarchy Architecture (48/48 tests passing)
-- **Current Task**: Present Budget Setup & Hierarchy Architecture Report and await human review/approval.
-- **Next Task**: Phase 0.9 Architecture Review ➔ Phase 1 Supabase Configuration & Relational Schemas.
-
----
-
-## 6. Important Architectural Decisions
-- **ADR-001**: Supabase as backend for DB, Auth, and Storage.
-- **ADR-002**: React + Vite + TypeScript frontend.
-- **ADR-003**: Cloudflare Pages deployment.
-- **ADR-004**: Household-based multi-user architecture.
-- **ADR-005**: Zero AI/LLM API in MVP (deterministic medical & financial calculation).
-- **ADR-006**: Mobile-first responsive UX with desktop sidebar parity.
-- **ADR-007**: Mobile-first consumer app design.
-- **ADR-008**: Playful premium family visual language.
-- **ADR-009**: Pregnancy-to-Age-5 Lifecycle Architecture (Little Journey platform model).
-
----
-
-## 7. Known Issues & Technical Debt
-- *None.* Automated tests (28/28 assertions) and production builds pass cleanly.
+## Status dan arah bisnis
+Lihat [STATUS](STATUS.md), [PRM](PRM.md) dan [ROADMAP](ROADMAP.md). Android/Play Store, English/global, pembayaran dan langganan belum tersedia. Rp10.000/bulan baru usulan harga untuk diuji, bukan plan aktif atau janji revenue.
+Tidak ada Supabase realtime subscriptions, AI/promosi/pricing eksternal, onboarding semua lifecycle, atau email otomatis.

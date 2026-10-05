@@ -1,3 +1,5 @@
+> Current decisions 5 October 2026: household/Expense source-of-truth and private attachments retained; five optional Indonesian Expense categories; no gestational week inputs on operational forms; age-inclusive child terminology; current report snapshots explicitly labeled; PDF and JSON client exports omit binary attachments; Free plan retained without project backup; Play Store/subscriptions/English and automated email deferred. Earlier ADRs are historical proposals; references to realtime/milestones/zero operating cost are not implemented guarantees. [Current architecture](ARCHITECTURE.md).
+
 # Architecture Decision Records (ADR)
 
 This file maintains records of architectural decisions made for the Baby Preparation Dashboard project.

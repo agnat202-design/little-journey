@@ -1,12 +1,25 @@
 # Changelog
 
-All notable changes to the Baby Preparation Dashboard project will be documented in this file.
+All notable changes to the Little Journey project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [Unreleased] - 2026-10-02
+## 2026-10-05 — Current checkpoint
+- Database persistence and private Storage activated by user; real records inspected read-only.
+- Checklist Edit/Delete and compact category filter; unified Checklist wording; removed PIC placeholder and gestational task controls (04bc29d, fb08c0f).
+- Appointment schedule-again and removed gestational controls (b2c5e05).
+- Shopping removed gestational controls and clarified planned purchase timing (a4860d8).
+- Profile email/family/child names (769b195).
+- Simplified Indonesian Expense categories, age-inclusive child label (1338b8a, c42aba8).
+- Monthly HTML preview/PDF and JSON record export (381d19c, 08bc89c).
+- Budget unrealized plans wording (3a395d6).
+- Stale login feedback cleared, top auth bar removed, logout in Profile (f64bbb6).
+- Refreshed status/product/architecture/database/QA/roadmap documentation; archived previous design/audit copies.
+- Push does not prove latest Cloudflare deployment; no email automation/Android/subscription/import created.
+
+## Historical checkpoint — 2026-10-02
 
 ### Added
 - **Phase 0.8.2 Budget Input, Setup & Hierarchy Architecture**:

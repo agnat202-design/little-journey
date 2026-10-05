@@ -1,46 +1,21 @@
-# MVP persistence validation — 4 October 2026
+# Little Journey — QA Evidence
+Diperbarui: 5 Oktober 2026.
 
-## Implemented
+## Latest local validation
+npm test, npm run lint (tsc --noEmit), npm run build passed for f64bbb6 code. Includes 48 business assertions, 27 record integration groups, persistent App acknowledgement/failure guards, config/Google SDK checks, adapters/repository rollback, Profil, HTML report month filters/escaping, PDF multipage, and stale OAuth error/URL cleanup. Existing Vite config/chunk-size advisories remain.
+Schema local suite: 23 checks passed. Persistence local suite: 9 groups passed. Covers active/stranger/anonymous RLS, cross-household references, price null/zero, valid purchase atomicity/rollback, stale household version, operation whitelist and private Storage paths.
+These SQL tests use PGlite + stubbed Auth/Storage contract; not remote HTTP/OAuth verification.
 
-Google Auth -> household gate -> acknowledged database state. Atomic bootstrap,
-consistent reads, version-checked changed-record writes, transactional purchase /
-Expense updates, persisted budget, real HPL setup/edit, private attachment upload
-and signed view. Failed or uncertain writes do not update the displayed saved
-records; reload is required before retry. Existing Shopping history decisions
-are preserved. No production demo pregnancy or prototype/session banners.
-Login uses the homepage purple gradient and shared logo.
+## Live evidence
+- User screenshots show Google login, household/HPL entry and persisted record use.
+- User successfully executed first schema and second persistence migrations.
+- Anonymous load RPC probe returned 401/42501 after activation, expected denial.
+- Agent read production Table Editor: Checklist, appointments, bought Shopping, Expenses and document metadata exist. Verified one Shopping purchase had one linked Expense, matching actual price/date. No private record contents copied into source.
+- Database → Backups explicitly says Free Plan does not include project backups.
 
-## Checks executed
+## Remaining live QA
+Not complete: every add/edit/delete/reload flow; private file upload/reload/view/delete; multi-user/session conflicts; logout/error patch; mobile PDF download and PDF/preview visual acceptance; latest Cloudflare build verification. No restore/backup drill, Play Store Android test, billing test or account deletion test.
+Earlier prototype P0/P1 gate does not automatically certify newly added persistence/Auth/reporting/Profile code. Do not label current complete product P0=0/P1=0 without a new rendered end-to-end pass.
 
-- npm test: passed (48 business assertions, 24 existing UI integration groups,
-  persistent App acknowledgement/rollback tests, configuration/Auth suites and
-  new adapter/repository assertions).
-- npm run lint: passed (TypeScript).
-- npm run build: passed. Existing Vite future-config warning and JS chunk-size
-  advisory remain; neither failed the build.
-- Local PostgreSQL schema suite: 23 checks passed.
-- Local PostgreSQL persistence suite: 9 groups passed, including stale version,
-  invalid purchase rollback, reverse/retained spending, active member writes,
-  stranger/anonymous denial, cross-household object IDs, whitelisted operations,
-  private file policies and tenant metadata paths.
-- Rendered login inspected at 390px mobile and 1280px desktop; no horizontal
-  overflow on the inspected mobile view; prototype/development copy absent.
-
-## Explicit validation limits / remaining acceptance
-
-SQL tests use PGlite and a local Auth/Storage schema contract; they do not exercise
-the real project's Storage HTTP service or OAuth token validation. New production
-household CRUD has not yet been tested in the browser. Owner must activate the
-additive SQL migration, then accept the deployment by testing real save -> reload,
-edit/delete, purchase totals and upload -> reload -> view/delete. Existing real
-Google sign-in was demonstrated by the user's screenshot; no account secrets are
-needed in chat.
-
-Task UX currently supports add/complete, consistent with the approved frontend;
-edit/delete is not exposed. Household invitation UI, Play Store packaging,
-payments and monetization are not implemented. Optional file cleanup failures are
-reported; upload/DB commits are not a distributed Storage transaction. A failed
-cleanup may leave an unreferenced private object requiring operator cleanup.
-
-Migration: supabase/migrations/202610040001_mvp_persistence.sql.
-Do not rerun the original schema migration or delete/reset existing tables.
+## QA rules
+Only create named test records; don't delete existing family history. Financial summaries must reconcile with Expenses. Failed/uncertain saves must not show success or retry blindly. Unknown price not Rp0. Preview snapshots not historical completion records. Backup claims require file coverage and restore evidence.
