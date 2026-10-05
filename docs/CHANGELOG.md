@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## 2026-10-05 — Appointment presentation
+- Upcoming default with nearest first, including today; past dates latest first grouped by month, ten records per page.
+- Add action moved above list; long notes expand; existing Edit/Delete/Schedule Again retained. Past date never implies completed visit. No database migration.
+
 ## 2026-10-05 — Current checkpoint
 - Database persistence and private Storage activated by user; real records inspected read-only.
 - Checklist Edit/Delete and compact category filter; unified Checklist wording; removed PIC placeholder and gestational task controls (04bc29d, fb08c0f).

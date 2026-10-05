@@ -137,6 +137,14 @@ test('Expense categories are five plain choices, optional, with legacy values pr
   assert.ok(!text(select).includes('Diapering'));assert.equal(select.props.required,undefined);
 });
 
+test('Appointments prioritize upcoming, include today, group past months and paginate history', () => {
+  nav('appointments');const list=view('AppointmentsView');const props={...list.props,today:'2026-10-05',appointments:[{id:'future',purpose:'Future',appointmentDate:'2026-11-17'},{id:'today',purpose:'Today',appointmentDate:'2026-10-05',appointmentTime:'09:00',notes:'long '.repeat(50)},...Array.from({length:12},(_,i)=>({id:'past-'+i,purpose:'Past '+i,appointmentDate:i<6?'2026-10-03':'2026-09-18'}))]};
+  let tree=render(list.type,props);assert.ok(text(tree).includes('Mendatang (2)'));assert.ok(text(tree).includes('Riwayat (12)'));assert.ok(text(tree).includes('Hari ini'));assert.ok(!text(tree).includes('Past 0'));assert.ok(text(tree).indexOf('Today')<text(tree).indexOf('Future'));assert.ok(nodes(tree).some(n=>n.type==='details'));
+  const buttons=nodes(tree).filter(n=>n.type==='button');assert.equal(text(buttons[0]),'Tambah Jadwal');
+  button(tree,'Riwayat (12)').props.onClick();tree=render(list.type,props);assert.equal(nodes(tree).filter(n=>n.type==='article').length,10);assert.ok(text(tree).includes('Oktober 2026'));assert.ok(text(tree).includes('September 2026'));assert.ok(text(tree).includes('Tidak berarti kontrol telah dilakukan.'));assert.ok(!text(tree).includes('Today'));
+  button(tree,'Lihat lebih banyak').props.onClick();tree=render(list.type,props);assert.equal(nodes(tree).filter(n=>n.type==='article').length,12);
+});
+
 test('Appointment required date, quick time, separate doctor/location and notes; no cost', () => {
   const entry = openQuick('Jadwal');
   let form = fillEntry(entry, { 'record-title': 'Kontrol keluarga' });

@@ -4,7 +4,7 @@ Diperbarui: 5 Oktober 2026 (Asia/Jakarta).
 ## Posisi produk
 MVP web untuk keluarga sudah terhubung ke Supabase dan digunakan pemilik untuk entry data. Belum merupakan rilis Play Store atau produk langganan. Lifecycle UI aktif masih Pregnancy; adanya tipe newborn/toddler/preschool bukan bukti flow tersebut sudah tersedia.
 Produksi: https://little-journey.pages.dev/
-Baseline kode sebelum pembaruan dokumentasi: f64bbb6. Semua perubahan sampai commit tersebut sudah push ke main. Deployment terakhir belum diperiksa langsung; jangan mengklaim seluruh patch live berdasarkan push saja.
+Checkpoint sebelumnya: f64bbb6 (kode), 738e14c (dokumentasi). Penyajian Jadwal diperbarui pada tahap ini; kode dikomit setelah validasi. Deployment terakhir belum diperiksa langsung; jangan mengklaim seluruh patch live berdasarkan push saja.
 
 ## Fitur di kode saat ini
 | Area | Tersedia | Batasan |
@@ -18,7 +18,7 @@ Baseline kode sebelum pembaruan dokumentasi: f64bbb6. Semua perubahan sampai com
 | Pembelian | Wajib harga aktual dan tanggal, satu Expense terkait; Rp0 hanya eksplisit | Tanpa cicilan/refund; pembatalan dapat mempertahankan riwayat sesuai pilihan pengguna |
 | Pengeluaran | Tambah/Edit/Hapus, riwayat/detail, lampiran opsional | Kategori utama lima pilihan; nilai kategori lama tetap dipertahankan |
 | Budget | Total, sudah keluar, sisa, persentase, pengeluaran per kategori, rencana belum terealisasi | Budget keseluruhan keluarga, bukan budget per bulan; alokasi kategori opsional sekunder |
-| Jadwal | CRUD, tanggal wajib, jam opsional/pilihan cepat, dokter/RS/catatan, Jadwalkan Lagi | Menyalin tujuan/dokter/RS ke record baru; tanggal/jam/catatan diisi baru; tanpa target minggu/biaya |
+| Jadwal | CRUD, tab Mendatang/Riwayat, urut tanggal, label Hari ini, riwayat per bulan + pagination, catatan panjang expandable, Tambah di atas, Jadwalkan Lagi | Menyalin tujuan/dokter/RS ke record baru; tanggal/jam/catatan diisi baru; tanpa target minggu/biaya |
 | Dokumen | Tambah/view/Edit/Hapus, tipe dokumen, tanggal/catatan, private upload | File asli tidak ikut ekspor laporan/JSON; cleanup dapat gagal dan dilaporkan |
 | Dashboard | Ringkasan dari records/HPL/budget pengguna | Tidak ada real-time subscription atau fake insights |
 | Laporan | Pilih bulan, preview HTML di aplikasi, download PDF langsung, ekspor JSON | Checklist/belanja/budget merupakan snapshot saat ekspor; bukan historical month-end state |
