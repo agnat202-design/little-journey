@@ -35,3 +35,6 @@ Ekspor JSON adalah salinan catatan household terbaru, children, profil pengguna 
 
 ## Kualitas dan verifikasi
 npm test, npm run lint (TypeScript), npm run build lulus pada perubahan kode terakhir. Suite mencakup business rules, komponen records, repository/rollback, config/Auth, Profil, laporan/PDF multi-halaman, dan stale login error. Schema lokal 23 checks; persistence SQL lokal 9 groups lulus pada audit sebelumnya. Build masih memberi advisory ukuran bundle/config Vite. Uji browser produksi semua mutation, logout, signed attachment dan mobile PDF masih perlu dituntaskan.
+
+### Upload foto — 5 Oktober 2026
+Foto JPG/PNG/WebP baru di atas 400 KB diperkecil sebelum upload (sisi terpanjang maksimal 2200 px, target sekitar 600 KB; hasil bergantung isi foto). File kecil dan PDF tetap asli. Daftar menampilkan jenis dan ukuran, bukan nama panjang. Teks prototipe lokal di Dokumen dihapus. Penggantian tetap menyimpan metadata baru sebelum menghapus file lama; kegagalan cleanup diberi peringatan. Foto lama tidak dikompres ulang.

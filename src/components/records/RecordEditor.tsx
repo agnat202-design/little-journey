@@ -1,3 +1,4 @@
+import { attachmentLabel } from '../../lib/uploadImage';
 import { expenseCategories, expenseCategoryLabel } from '../../lib/expenseCategories';
 import React, { useState } from 'react';
 import { LocalAttachment, JourneyStage } from '../../types/domain';
@@ -29,9 +30,9 @@ export function AttachmentPicker({ value, onChange, required = false }: { value?
       <label className="px-3 py-2 rounded-xl bg-[#EEE9FF] text-[#6C4CF5] text-xs font-black cursor-pointer">Ambil Foto<input aria-label="Ambil Foto" className="sr-only" type="file" accept="image/*" capture="environment" onChange={choose} /></label>
       <label className="px-3 py-2 rounded-xl bg-[#F5F3ED] text-[#34236B] text-xs font-black cursor-pointer">Upload File<input aria-label="Upload File" className="sr-only" type="file" onChange={choose} /></label>
     </div>
-    {value && <div className="flex items-center gap-2 text-xs"><span className="font-bold text-[#292442] break-all">{value.name}</span><button type="button" onClick={() => onChange(undefined)} className="text-[#79738E] underline">Hapus file</button></div>}
+    {value && <div className="flex items-center gap-2 text-xs"><span className="font-bold text-[#292442] break-all">{attachmentLabel(value)}</span><button type="button" onClick={() => onChange(undefined)} className="text-[#79738E] underline">Hapus file</button></div>}
     {error && <p role="alert" className="text-xs text-[#E05342]">{error}</p>}
-    <p className="text-[11px] text-[#79738E]">Maksimal 10 MB. File diunggah saat catatan disimpan.</p>
+    <p className="text-[11px] text-[#79738E]">Maksimal 10 MB. Foto JPG/PNG/WebP diperkecil saat disimpan; PDF tetap asli.</p>
   </div>;
 }
 

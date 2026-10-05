@@ -1,3 +1,4 @@
+import { prepareUpload } from './uploadImage';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LocalAttachment } from '../types/domain';
 import { decodeHousehold, householdChanges, type HouseholdSnapshot } from './householdRecords';
@@ -15,11 +16,12 @@ export class HouseholdRepository {
       if (!a || a.storagePath) return a;
       if (!a.file) throw new Error('Pilih ulang file yang akan diunggah.');
       if (a.size>10485760) throw new Error('Ukuran file maksimal 10 MB.');
+      const prepared = await prepareUpload(a.file);
       const path = `${this.current.householdId}/${crypto.randomUUID()}`;
-      const {error} = await this.client.storage.from('family-files').upload(path,a.file,{contentType:a.mimeType || 'application/octet-stream',upsert:false});
+      const {error} = await this.client.storage.from('family-files').upload(path,prepared,{contentType:prepared.type || 'application/octet-stream',upsert:false});
       if(error) throw error;
       uploaded.push(path);
-      return {...a, storagePath:path, file:undefined};
+      return {...a, name:prepared.name, size:prepared.size, mimeType:prepared.type, storagePath:path, file:undefined};
     };
     try {
       const next:HouseholdSnapshot = {...input, allocations:input.allocations.map(a => ({...a,id:a.id || this.current.allocations.find(old => old.category===a.category)?.id || (a.planned>0?crypto.randomUUID():undefined)})),

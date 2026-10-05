@@ -64,10 +64,33 @@ assert.equal(committed.records.documents[0].attachment.localUrl,undefined);
 assert.equal(committed.records.documents[0].attachment.file,undefined);
 assert.ok(!JSON.stringify(captured).includes('blob:'));
 assert.equal(removed.length,0);
+const oldPath=committed.records.documents[0].attachment.storagePath!;
+const replacement={...committed,records:{...committed.records,documents:[{...committed.records.documents[0],attachment:{...next.records.documents[0].attachment,id:'replacement'}}]}};
+await repository.save(replacement);
+assert.deepEqual(removed.at(-1),[oldPath],'Replacement removes old file after successful metadata commit');
 fail=true;
 const failedRepository=await HouseholdRepository.load(client,householdId);
 await assert.rejects(failedRepository.save(next));
 assert.equal(failedRepository.current.records.documents.length,0);
-assert.deepEqual(removed[0],[uploaded[1]],'Failed transaction removes its upload, never committed files');
+assert.deepEqual(removed.at(-1),[uploaded.at(-1)],'Failed transaction removes its upload, never committed files');
 assert.equal(before.records.expenses.length,0,'Pure transformations must not mutate loaded state');
 console.log('PASS persistence adapters/repository: unknown/zero/quantity, purchase round-trip, deletion order, dates, overdue, microsecond version, private upload metadata, failed-save cleanup');
+
+// Browser image conversion: smaller upload, unchanged PDF, URL cleanup.
+const { prepareUpload, attachmentLabel } = await import('./uploadImage');
+const originalImage = (globalThis as any).Image;
+const originalDocument = (globalThis as any).document;
+const originalCreate = URL.createObjectURL, originalRevoke = URL.revokeObjectURL;
+let revoked = false; let canvasWidth = 0;
+(globalThis as any).Image = class { naturalWidth=4400; naturalHeight=2200; async decode() {} };
+(globalThis as any).document = {createElement:()=>({set width(n:number){canvasWidth=n;},set height(_n:number){},getContext:()=>({drawImage(){}}),toBlob:(done:any)=>done(new Blob(['compressed'],{type:'image/webp'}))})};
+URL.createObjectURL=()=> 'blob:compression-test'; URL.revokeObjectURL=()=>{revoked=true;};
+try {
+ const image=new File([new Uint8Array(900000)],'long-photo.jpg',{type:'image/jpeg'});
+ const prepared=await prepareUpload(image);
+ assert.equal(prepared.type,'image/webp'); assert.equal(prepared.name,'long-photo.webp'); assert.ok(prepared.size<image.size);
+ assert.equal(canvasWidth,2200); assert.equal(revoked,true);
+ const pdf=new File(['pdf'],'report.pdf',{type:'application/pdf'}); assert.equal(await prepareUpload(pdf),pdf);
+ assert.equal(attachmentLabel({mimeType:'image/jpeg',size:512000}),'Foto • 500 KB');
+} finally { (globalThis as any).Image=originalImage;(globalThis as any).document=originalDocument;URL.createObjectURL=originalCreate;URL.revokeObjectURL=originalRevoke; }
+console.log('PASS image upload compression, dimensions, metadata, PDF preservation, URL cleanup');
