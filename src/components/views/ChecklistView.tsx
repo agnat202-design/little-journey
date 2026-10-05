@@ -63,6 +63,15 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
         </div>
       </section>
 
+      <button
+        type="button"
+        onClick={onAddItem}
+        className="w-full py-3.5 rounded-2xl bg-[#EEE9FF] text-[#6C4CF5] font-black text-sm inline-flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+      >
+        <Plus className="w-4 h-4" aria-hidden="true" />
+        Tambah Checklist
+      </button>
+
       <label className="block text-xs font-bold text-[#79738E]">Kategori
         <select aria-label="Filter kategori checklist" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="mt-1 block w-full sm:max-w-xs rounded-2xl border border-[#EBE6DC] bg-white p-3 text-[#292442]">
           <option value="All">Semua kategori</option>

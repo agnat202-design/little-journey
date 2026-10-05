@@ -37,6 +37,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
   // Active Lifecycle Stage (MVP is 'pregnancy'; future-ready for birth, newborn, etc.)
   const [activeStage] = useState<JourneyStage>('pregnancy');
 
+  const [quickAddInitialType, setQuickAddInitialType] = useState<QuickAddType | null>(null);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState<boolean>(false);
 
 
@@ -222,7 +223,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
               onToggleItem={handleToggleChecklist}
               onEditItem={setTaskEditor}
               onDeleteItem={task => setConfirmation({title:'Hapus Checklist?',body:'Item ini akan dihapus dari checklist. Lanjutkan?',actions:[{label:'Hapus Checklist',run:()=>setChecklistItems(prev=>prev.filter(item=>item.id!==task.id))}]})}
-              onAddItem={() => setIsQuickAddOpen(true)}
+              onAddItem={() => {setQuickAddInitialType('tugas'); setIsQuickAddOpen(true);}}
             />
           )}
 
@@ -286,7 +287,8 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
       {/* 4. QUICK ADD BOTTOM SHEET */}
       <QuickAddBottomSheet
         isOpen={isQuickAddOpen}
-        onClose={() => setIsQuickAddOpen(false)}
+        initialType={quickAddInitialType}
+        onClose={() => {setIsQuickAddOpen(false); setQuickAddInitialType(null);}}
         onSaveItem={handleSaveQuickItem}
         activeStage={activeStage}
       />

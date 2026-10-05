@@ -11,6 +11,7 @@ interface QuickAddBottomSheetProps {
   onClose: () => void;
   onSaveItem: (type: QuickAddType, data: any) => void | boolean | Promise<boolean>;
   activeStage?: JourneyStage;
+  initialType?: QuickAddType | null;
 }
 
 export const QuickAddBottomSheet: React.FC<QuickAddBottomSheetProps> = (props) =>
@@ -20,8 +21,9 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
   onClose,
   onSaveItem,
   activeStage = 'pregnancy',
+  initialType = null,
 }) => {
-  const [selectedType, setSelectedType] = useState<QuickAddType | null>(null);
+  const [selectedType, setSelectedType] = useState<QuickAddType | null>(initialType);
   
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Pregnancy');

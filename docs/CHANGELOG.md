@@ -97,3 +97,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Upload foto — 5 Oktober 2026
 Foto JPG/PNG/WebP baru di atas 400 KB diperkecil sebelum upload (sisi terpanjang maksimal 2200 px, target sekitar 600 KB; hasil bergantung isi foto). File kecil dan PDF tetap asli. Daftar menampilkan jenis dan ukuran, bukan nama panjang. Teks prototipe lokal di Dokumen dihapus. Penggantian tetap menyimpan metadata baru sebelum menghapus file lama; kegagalan cleanup diberi peringatan. Foto lama tidak dikompres ulang.
+
+- 5 Oktober 2026: tombol Tambah Checklist selalu tersedia di atas filter kategori, termasuk saat daftar sudah berisi. Menggunakan alur tambah checklist yang sama.
