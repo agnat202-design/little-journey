@@ -1,3 +1,4 @@
+import { displayDate } from '../../lib/familyRecords';
 import React, { useState } from 'react';
 import { ChecklistItem } from '../../types/domain';
 import { CATEGORY_STYLES } from '../../design/tokens';
@@ -134,7 +135,8 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                       {task.name}
                     </h2>
 
-                    {task.notes && (
+                    {task.targetDate && <p className="text-xs font-bold text-[#6C4CF5] mt-1">Target: {displayDate(task.targetDate)}</p>}
+                    {task.notes && task.notes !== 'Ditambahkan dari Catat Cepat' && (
                       <p className="text-xs font-semibold text-[#79738E] mt-1 leading-relaxed">
                         {task.notes}
                       </p>

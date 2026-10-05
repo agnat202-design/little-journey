@@ -143,7 +143,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
     if (type !== 'tugas') return saveRecord(type === 'belanja' ? 'shopping' : type === 'pengeluaran' ? 'expense' : 'appointment', data);
     const item: ChecklistItem = { id: crypto.randomUUID(), ...context,
       stage: activeStage, name: data.title, category: data.category || 'Pregnancy', priority: 'Medium', targetGestationalWeek: data.targetGestationalWeek,
-      status: 'Pending', assignedTo: undefined, notes: 'Ditambahkan dari Catat Cepat' };
+      status: 'Pending', assignedTo: undefined, notes: data.notes, targetDate: data.targetDate };
     return setChecklistItems(prev => [item, ...prev],()=>setActiveTab('checklist'));
   };
   const requestShoppingDelete = (item: ShoppingItem) => {

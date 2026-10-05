@@ -1,3 +1,4 @@
+import { isRecordDate } from '../../lib/familyRecords';
 import React, { useEffect, useState } from 'react';
 import { X, ShoppingBag, Receipt, CheckSquare, Calendar, ArrowRight, Sparkles } from 'lucide-react';
 
@@ -26,6 +27,8 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
   const [selectedType, setSelectedType] = useState<QuickAddType | null>(initialType);
   
   const [title, setTitle] = useState('');
+  const [notes, setNotes] = useState('');
+  const [targetDate, setTargetDate] = useState('');
   const [category, setCategory] = useState('Pregnancy');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSaving,setIsSaving] = useState(false);
@@ -130,8 +133,10 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
         {selectedType === null ? (
           <p className="text-sm font-bold text-[#79738E] text-center py-3">Pilih jenis catatan untuk mulai.</p>
         ) : selectedType === 'tugas' ? (
-          <form className="space-y-4" onSubmit={e => { e.preventDefault(); if (!title.trim() || isSuccess || isSaving) return; void save('tugas', { title: title.trim(), category }); }}>
+          <form className="space-y-4" onSubmit={e => { e.preventDefault(); if (!title.trim() || (targetDate && !isRecordDate(targetDate)) || isSuccess || isSaving) return; void save('tugas', { title: title.trim(), category, notes: notes.trim() || undefined, targetDate: targetDate || undefined }); }}>
             <div><label htmlFor="task-title" className={labelClass}>Nama Checklist *</label><input id="task-title" required autoFocus value={title} onChange={e => setTitle(e.target.value)} className={fieldClass} /></div>
+            <div><label htmlFor="task-date" className={labelClass}>Target tanggal (opsional)</label><input id="task-date" type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} className={fieldClass} /></div>
+            <div><label htmlFor="task-notes" className={labelClass}>Catatan (opsional)</label><textarea id="task-notes" value={notes} onChange={e => setNotes(e.target.value)} className={fieldClass} rows={3} /></div>
             <div><label htmlFor="task-category" className={labelClass}>Kategori</label><select id="task-category" value={category} onChange={e => setCategory(e.target.value)} className={fieldClass}>{['Pregnancy', 'Mother', 'Hospital bag', 'Baby clothing', 'Feeding', 'Documents', 'Medical', 'Other'].map(c => <option key={c}>{c}</option>)}</select></div>
             <button disabled={!title.trim() || isSuccess || isSaving} className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black disabled:opacity-40">{isSuccess ? 'Berhasil Dicatat!' : isSaving?'Menyimpan…':'Simpan Checklist'}</button>
           </form>

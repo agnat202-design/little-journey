@@ -79,6 +79,17 @@ test('Checklist has no gestational timing controls', () => {
   assert.ok(!nodes(body).some(n=>n.props.id==='task-week'));
 });
 
+test('Checklist creation keeps optional notes/date and hides old automatic notes', () => {
+  nav('checklist');view('ChecklistView').props.onAddItem();
+  const sheet=view('QuickAddBottomSheet');const shell=render(sheet.type,sheet.props);let body=render(shell.type,shell.props);
+  field(body,'task-title','Vaksin Influenza');body=render(shell.type,shell.props);
+  field(body,'task-date','2026-12-17');field(body,'task-notes','Konfirmasi klinik');body=render(shell.type,shell.props);submit(body);
+  const list=view('ChecklistView');const item=list.props.items[0];assert.equal(item.targetDate,'2026-12-17');assert.equal(item.notes,'Konfirmasi klinik');
+  assert.ok(text(render(list.type,list.props)).includes('Target:'));assert.ok(!text(render(list.type,list.props)).includes('Ditambahkan dari Catat Cepat'));
+  list.props.onEditItem(item);const edit=view('TaskEditor');const tree=render(edit.type,edit.props);
+  assert.ok(nodes(tree).some(n=>n.type==='input'&&n.props.type==='date'&&n.props.value==='2026-12-17'));
+});
+
 test('Tasks can edit/delete without toggling status and use compact relevant categories', () => {
   nav('checklist'); let list = view('ChecklistView');
   list.props.onEditItem({id:'task-qa',householdId:'household',stage:'pregnancy',name:'Original',category:'Medical',status:'Completed',priority:'Medium'});
