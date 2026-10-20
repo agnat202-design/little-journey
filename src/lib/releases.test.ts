@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {claimReleaseNotice,releaseNoticeKey,latestRelease} from './releases';
+const data=new Map<string,string>();const storage={getItem:(k:string)=>data.get(k)??null,setItem:(k:string,v:string)=>{data.set(k,v);}};
+assert.deepEqual(Array.from({length:5},()=>claimReleaseNotice(storage,'a')),[true,true,true,false,false]);
+assert.equal(claimReleaseNotice(storage,'b'),true,'New release has its own allowance');
+assert.equal(claimReleaseNotice(storage,'a'),false,'Old release stays hidden');
+assert.equal(data.get(releaseNoticeKey('a')),'3');
+const other={getItem:()=>null,setItem:()=>{}};assert.equal(claimReleaseNotice(other,'a'),true,'Separate browser has separate allowance');
+assert.equal(claimReleaseNotice({getItem:()=>{throw Error();},setItem:()=>{}},'a'),false);
+assert.equal(claimReleaseNotice({getItem:()=>null,setItem:()=>{throw Error();}},'a'),false);
+assert.ok(latestRelease.changes.length>0);assert.ok(latestRelease.version);
+console.log('PASS update notices: maximum three, persistence, next release, separate browser, blocked storage');

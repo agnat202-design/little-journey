@@ -1,3 +1,4 @@
+import { ReleaseNotice } from './components/ReleaseNotice';
 import { GlobalSearch } from './components/GlobalSearch';
 import { MonthlyReportModal } from './components/modals/MonthlyReportModal';
 import React, { useState, useMemo } from 'react';
@@ -197,6 +198,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
         {saveError && <div role="alert" className="fixed inset-x-4 top-4 z-[110] mx-auto max-w-xl rounded-2xl border border-[#F0C6BF] px-5 py-4 shadow-xl text-sm text-[#B14435] bg-[#FFF2EF]">{saveError} <button onClick={()=>window.location.reload()} className="mt-2 block underline font-bold">Muat ulang data</button></div>}
         <div className="lg:hidden px-4"><button onClick={()=>setActiveTab('profile')} className="px-3 py-2 text-xs font-bold text-[#6C4CF5]">Profil</button></div>
         {runtime && <div className="px-4 lg:px-8 py-2"><button onClick={()=>setReportOpen(true)} className="rounded-full border border-[#E9E4DC] bg-white px-4 py-2 text-xs font-bold text-[#6C4CF5]">Download Laporan Bulanan</button></div>}
+        <ReleaseNotice />
         <GlobalSearch records={records} tasks={checklistItems} onAttachment={setAttachment} />
         {/* Dynamic View Display */}
         <main className="flex-1 py-4 sm:py-6">

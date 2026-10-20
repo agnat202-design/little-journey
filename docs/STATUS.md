@@ -48,3 +48,6 @@ Lihat [MONETIZATION.md](MONETIZATION.md). Prioritas biaya pengguna: tetap Supaba
 
 ## 20 Oktober 2026 — Pencarian global
 Kolom Cari semua catatan tersedia di seluruh menu: Dokumen, Pengeluaran, Jadwal, Checklist dan Belanja. Mencari judul/catatan/kategori, dokter/RS, brand/model/toko dan nama lampiran; mendukung lab/laboratorium, filter jenis, hasil bertahap dan detail dengan buka lampiran. Memakai data household aktif yang telah dimuat; tidak menambah API eksternal/schema. Belum OCR/isi PDF dan bukan pencarian semantik medis.
+
+## 20 Oktober 2026 — Kabar pembaruan
+Banner kecil non-modal setelah login, dapat ditutup; maksimal 3 kali per versi pada browser/perangkat yang sama via localStorage. Pindah menu tidak menghitung ulang; membuka ulang/memuat ulang aplikasi menghitung satu tampilan. Browser lain atau data browser dihapus memiliki hitungan baru; storage diblokir berarti banner tidak ditampilkan. Profil selalu memuat versi/tanggal dan daftar pembaruan singkat. Setiap fitur yang dirilis harus memperbarui src/lib/releases.ts dengan versi unik dan bahasa awam; bukan notifikasi push/alarm.

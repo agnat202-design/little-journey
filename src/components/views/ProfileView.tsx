@@ -1,3 +1,4 @@
+import { ReleaseHistory } from '../ReleaseNotice';
 import React, { useEffect, useState } from 'react';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 import { fieldClass, labelClass, buttonClass } from '../records/RecordEditor';
@@ -30,6 +31,7 @@ export function ProfileView({ client, user, householdId, onLogout }: { client: S
   }
   return <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28">
     <h1 className="text-2xl font-black">Profil</h1>
+    <ReleaseHistory />
     {onLogout && <button disabled={busy} onClick={async()=>{if(busy)return;setBusy(true);setError('');try{const ok=await onLogout();if(!ok)setError('Belum berhasil keluar. Silakan coba lagi.');}catch{setError('Belum berhasil keluar. Silakan coba lagi.');}finally{setBusy(false);}}} className="rounded-full border border-[#E9E4DC] bg-white px-4 py-2 text-sm font-bold text-[#34236B]">{busy?'Memproses…':'Keluar dari Akun'}</button>}
     <section className="rounded-[24px] border border-[#F0ECE4] bg-white p-5"><h2 className="font-black">Akun Google</h2><p className="mt-2 text-sm break-all">{user.email || 'Email tidak tersedia'}</p></section>
     {error && <p role="alert" className="text-sm text-[#B14435]">{error}<button onClick={()=>window.location.reload()} className="ml-2 underline">Muat ulang</button></p>}

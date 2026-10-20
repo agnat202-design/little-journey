@@ -19,3 +19,5 @@ Diperbarui: 5 Oktober 2026. Dokumentasi mengikuti kode, bukti deployment, dan ke
 ## Aturan pembaruan
 Setiap perubahan fitur memperbarui STATUS, PRM/ROADMAP jika scope berubah, dan CHANGELOG. Perubahan database/penyimpanan memperbarui ARCHITECTURE/DATABASE. Hasil tes dan bukti live ditulis pada QA. Jangan menandai push sebagai deployment terverifikasi, atau tes lokal sebagai QA produksi. Catat keterbatasan ekspor/backup. Jangan simpan credentials, data keluarga, atau isi dokumen pribadi dalam dokumentasi.
 Dokumen PRODUCT_QA dan UX berisi checkpoint historis; gunakan STATUS dan PRM untuk status terbaru.
+
+Untuk pembaruan fitur yang terlihat pengguna, perbarui src/lib/releases.ts: versi unik, tanggal, judul dan poin singkat bahasa Indonesia. Dipakai bersama oleh banner dan bagian Pembaruan terbaru di Profil.
