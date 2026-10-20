@@ -45,3 +45,6 @@ Foto JPG/PNG/WebP baru di atas 400 KB diperkecil sebelum upload (sisi terpanjang
 
 ## Rencana monetisasi — 5 Oktober 2026
 Lihat [MONETIZATION.md](MONETIZATION.md). Prioritas biaya pengguna: tetap Supabase Free untuk MVP/pelanggan awal sesuai kuota, tanpa kewajiban Pro saat pelanggan pertama. Backup database dan foto terpisah, uji restore, monitoring dan kuota keluarga belum lengkap dan menjadi pekerjaan sebelum komitmen layanan berbayar. Harga dan kanal adalah usulan untuk diuji; pembayaran, upgrade, listing Shopee dan submission store belum dilakukan.
+
+## 20 Oktober 2026 — Pencarian global
+Kolom Cari semua catatan tersedia di seluruh menu: Dokumen, Pengeluaran, Jadwal, Checklist dan Belanja. Mencari judul/catatan/kategori, dokter/RS, brand/model/toko dan nama lampiran; mendukung lab/laboratorium, filter jenis, hasil bertahap dan detail dengan buka lampiran. Memakai data household aktif yang telah dimuat; tidak menambah API eksternal/schema. Belum OCR/isi PDF dan bukan pencarian semantik medis.

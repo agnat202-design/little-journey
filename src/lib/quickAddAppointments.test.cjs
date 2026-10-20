@@ -19,7 +19,7 @@ const moduleStub = { exports: {} };
 vm.runInNewContext(compiled, { module: moduleStub, exports: moduleStub.exports, require: name => { if (name === 'react') return React; if (name === 'lucide-react') return new Proxy({}, { get: (_, key) => key }); throw new Error(name); }, Date, Intl, URL: TestURL, crypto, setTimeout, clearTimeout });
 const App = moduleStub.exports.default;
 const stateKey = (type, props) => `${type.name}:${props.kind || ''}:${props.initial?.id || ''}`;
-function render(type, props = {}) { const key = stateKey(type, props); if (!states.has(key)) states.set(key, []); state = states.get(key); index = 0; return type(props); }
+function render(type, props = {}) { if(type.name==='AppointmentsView')props={today:'2026-10-05',...props}; const key = stateKey(type, props); if (!states.has(key)) states.set(key, []); state = states.get(key); index = 0; return type(props); }
 function nodes(tree) { return !tree || typeof tree !== 'object' ? [] : [tree, ...(tree.props.children || []).flat(Infinity).flatMap(nodes)]; }
 function text(tree) { if (tree == null || typeof tree === 'boolean') return ''; return typeof tree !== 'object' ? String(tree) : (tree.props.children || []).flat(Infinity).map(text).join(''); }
 function find(tree, test) { const node = nodes(tree).find(test); assert.ok(node, 'Expected UI element exists'); return node; }
@@ -44,6 +44,14 @@ function openQuick(label) {
 function fillEntry(element, data) { let form = render(element.type, element.props); for (const [id, value] of Object.entries(data)) { field(form, id, value); form = render(element.type, element.props); } return form; }
 function confirm(label) { const modal = find(app(), n => n.props['aria-labelledby'] === 'confirmation-title'); button(modal, label).props.onClick(); }
 function test(label, fn) { states.clear(); fn(); passed++; console.log(`PASS: ${label}`); }
+
+test('Global search opens record detail and private attachment', () => {
+ const widget=component(app(),'GlobalSearch');const attachment={id:'f',name:'lab.pdf',mimeType:'application/pdf',size:42};
+ const props={...widget.props,records:{shoppingItems:[],appointments:[],expenses:[],documents:[{id:'d',title:'Hasil lab',documentType:'Hasil Lab',attachment}]}};
+ let tree=render(widget.type,props);find(tree,n=>n.props['aria-label']==='Cari semua catatan').props.onChange({target:{value:'lab'}});tree=render(widget.type,props);
+ find(tree,n=>n.type==='button'&&text(n).includes('Hasil lab')).props.onClick();tree=render(widget.type,props);
+ assert.ok(text(tree).includes('Hasil lab'));button(tree,'Buka Lampiran').props.onClick();assert.equal(view('AttachmentView').props.attachment.name,'lab.pdf');
+});
 
 test('Initial empty records contain no invented personal data or misleading session status', () => {
   const root = app();
