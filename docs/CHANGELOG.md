@@ -113,3 +113,6 @@ Kolom Cari semua catatan tersedia di seluruh menu: Dokumen, Pengeluaran, Jadwal,
 
 ## 20 Oktober 2026 — Kabar pembaruan
 Banner kecil non-modal setelah login, dapat ditutup; maksimal 3 kali per versi pada browser/perangkat yang sama via localStorage. Pindah menu tidak menghitung ulang; membuka ulang/memuat ulang aplikasi menghitung satu tampilan. Browser lain atau data browser dihapus memiliki hitungan baru; storage diblokir berarti banner tidak ditampilkan. Profil selalu memuat versi/tanggal dan daftar pembaruan singkat. Setiap fitur yang dirilis harus memperbarui src/lib/releases.ts dengan versi unik dan bahasa awam; bukan notifikasi push/alarm.
+
+## 1 November 2026 — Tambah sesuai konteks
+Audit tombol tambah: Shopping langsung RecordEditor shopping; Checklist form khusus tanpa pemilih jenis; Budget, Jadwal dan Dokumen tetap langsung form masing-masing. Catat Cepat global desktop/mobile menyediakan lima pilihan termasuk Dokumen dan memulai netral setiap dibuka. Dokumen memakai upload/persistensi yang sama. Release notice 1.2.0 diperbarui dan ringkasan banner kini mengikuti sumber versi.

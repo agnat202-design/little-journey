@@ -142,7 +142,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
     });
   };
   const handleSaveQuickItem = (type: QuickAddType, data: any) => {
-    if (type !== 'tugas') return saveRecord(type === 'belanja' ? 'shopping' : type === 'pengeluaran' ? 'expense' : 'appointment', data);
+    if (type !== 'tugas') return saveRecord(type === 'belanja' ? 'shopping' : type === 'pengeluaran' ? 'expense' : type === 'dokumen' ? 'document' : 'appointment', data);
     const item: ChecklistItem = { id: crypto.randomUUID(), ...context,
       stage: activeStage, name: data.title, category: data.category || 'Pregnancy', priority: 'Medium', targetGestationalWeek: data.targetGestationalWeek,
       status: 'Pending', assignedTo: undefined, notes: data.notes, targetDate: data.targetDate };
@@ -177,7 +177,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
       <DesktopSidebar
         activeTab={activeTab}
         onTabChange={(tab) => setActiveTab(tab)}
-        onQuickAdd={() => setIsQuickAddOpen(true)}
+        onQuickAdd={() => {setQuickAddInitialType(null); setIsQuickAddOpen(true);}}
         currentWeek={pregnancyMetrics?.currentWeek}
         currentDay={pregnancyMetrics?.currentDay}
         householdName={runtime?.initial.householdName}
@@ -239,7 +239,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
               onReverse={requestReverse}
               onEdit={record => setEditor({ kind: 'shopping', record })}
               onDelete={requestShoppingDelete}
-              onAddItem={() => setIsQuickAddOpen(true)}
+              onAddItem={() => setEditor({kind:'shopping'})}
             />
           )}
 

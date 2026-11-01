@@ -1,11 +1,11 @@
 import { isRecordDate } from '../../lib/familyRecords';
 import React, { useEffect, useState } from 'react';
-import { X, ShoppingBag, Receipt, CheckSquare, Calendar, ArrowRight, Sparkles } from 'lucide-react';
+import { X, ShoppingBag, Receipt, CheckSquare, Calendar, FileText, ArrowRight, Sparkles } from 'lucide-react';
 
 import { JourneyStage } from '../../types/domain';
 import { RecordEntryForm, fieldClass, labelClass } from '../records/RecordEditor';
 
-export type QuickAddType = 'belanja' | 'pengeluaran' | 'tugas' | 'jadwal';
+export type QuickAddType = 'belanja' | 'pengeluaran' | 'tugas' | 'jadwal' | 'dokumen';
 
 interface QuickAddBottomSheetProps {
   isOpen: boolean;
@@ -60,7 +60,7 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span className="text-xl">✨</span>
-            <h2 id="quick-add-title" className="text-xl font-black text-[#292442]">Catat Cepat</h2>
+            <h2 id="quick-add-title" className="text-xl font-black text-[#292442]">{initialType === 'tugas' ? 'Tambah Checklist' : 'Catat Cepat'}</h2>
           </div>
           <button
             onClick={onClose}
@@ -71,8 +71,8 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
           </button>
         </div>
 
-        {/* 4 Mode Selectors Pills: Belanja, Pengeluaran, Tugas, Jadwal */}
-        <div className="grid grid-cols-4 gap-1.5 bg-[#F6F4EE] p-1.5 rounded-2xl mb-5">
+        {/* Global chooser only; contextual add actions open their form directly. */}
+        {!initialType && <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 bg-[#F6F4EE] p-1.5 rounded-2xl mb-5">
           <button
             type="button"
             aria-pressed={selectedType === 'belanja'}
@@ -128,7 +128,8 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
             <Calendar className="w-4 h-4 mb-1" />
             Jadwal
           </button>
-        </div>
+          <button type="button" aria-pressed={selectedType === 'dokumen'} onClick={() => setSelectedType('dokumen')} className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl text-xs font-bold cursor-pointer ${selectedType === 'dokumen' ? 'bg-white text-[#6C4CF5] shadow-xs' : 'text-[#79738E]'}`}><FileText className="w-4 h-4 mb-1" />Dokumen</button>
+        </div>}
 
         {selectedType === null ? (
           <p className="text-sm font-bold text-[#79738E] text-center py-3">Pilih jenis catatan untuk mulai.</p>
@@ -141,7 +142,7 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
             <button disabled={!title.trim() || isSuccess || isSaving} className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black disabled:opacity-40">{isSuccess ? 'Berhasil Dicatat!' : isSaving?'Menyimpan…':'Simpan Checklist'}</button>
           </form>
         ) : (
-          <RecordEntryForm key={selectedType} kind={selectedType === 'belanja' ? 'shopping' : selectedType === 'pengeluaran' ? 'expense' : 'appointment'} stage={activeStage} onSave={data => save(selectedType, data)} />
+          <RecordEntryForm key={selectedType} kind={selectedType === 'belanja' ? 'shopping' : selectedType === 'pengeluaran' ? 'expense' : selectedType === 'dokumen' ? 'document' : 'appointment'} stage={activeStage} onSave={data => save(selectedType, data)} />
         )}
       </div>
     </div>

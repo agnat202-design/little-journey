@@ -312,6 +312,20 @@ test('Shopping Edit displays a category saved through the linked Expense', () =>
   assert.equal(view('ShoppingView').props.expenses.find(e => e.shoppingItemId === item.id).category, 'Medical');
 });
 
+test('Every menu add opens its matching form without the global chooser', () => {
+ for(const [tab,name,handler,kind] of [['shopping','ShoppingView','onAddItem','shopping'],['budget','BudgetView','onAddExpense','expense'],['appointments','AppointmentsView','onAddAppointment','appointment'],['documents','DocumentsView','onAdd','document']]){
+  nav(tab);view(name).props[handler]();assert.equal(view('RecordEditor').props.kind,kind);assert.equal(view('QuickAddBottomSheet').props.isOpen,false);view('RecordEditor').props.onClose();
+ }
+ nav('checklist');view('ChecklistView').props.onAddItem();const sheet=view('QuickAddBottomSheet');const shell=render(sheet.type,sheet.props);const body=render(shell.type,shell.props);
+ assert.ok(text(body).includes('Tambah Checklist'));assert.ok(text(body).includes('Simpan Checklist'));assert.ok(!nodes(body).some(n=>n.props['aria-pressed']!==undefined));sheet.props.onClose();
+});
+
+test('Global quick add includes Documents and saves the same required-file record', () => {
+ const entry=openQuick('Dokumen');assert.equal(entry.props.kind,'document');let form=fillEntry(entry,{'record-title':'Hasil darah','document-type':'Hasil Lab','record-date':'2026-11-01'});
+ assert.equal(find(form,n=>n.type==='button'&&n.props.type==='submit').props.disabled,true);
+ form=attach(entry,'lab.pdf','application/pdf');submit(form);const doc=view('DocumentsView').props.documents[0];assert.equal(doc.title,'Hasil darah');assert.equal(doc.attachment.name,'lab.pdf');assert.equal(doc.documentType,'Hasil Lab');
+});
+
 test('Documents add/view/edit/delete with local file metadata and required file', () => {
   nav('documents'); let list = view('DocumentsView'); assert.equal(list.props.documents.length, 0); list.props.onAdd(); let entry = entryFromEditor(); let form = fillEntry(entry, { 'record-title': 'USG keluarga', 'record-date': '2026-10-03', 'record-notes': 'Untuk kontrol berikutnya' }); assert.equal(find(form, n => n.type === 'button' && n.props.type === 'submit').props.disabled, true);
   const selector = find(form, n => n.props.id === 'document-type'); for (const type of ['USG','Hasil Lab','Dokumen Kontrol','Invoice','Receipt','Resep','Lainnya']) assert.ok(text(selector).includes(type));
