@@ -4,7 +4,7 @@ import { Home, CheckSquare, Plus, ShoppingBag, PieChart } from 'lucide-react';
 export type TabKey = 'home' | 'checklist' | 'shopping' | 'budget';
 
 interface BottomNavProps {
-  activeTab: TabKey;
+  activeTab: TabKey | null;
   onTabChange: (tab: TabKey) => void;
   onQuickAdd: () => void;
 }
@@ -17,11 +17,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   return (
     <nav 
       aria-label="Menu utama"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0ECE4] px-4 py-2 pb-safe max-w-[480px] mx-auto transition-all"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F0ECE4] px-3 pt-2 pb-safe max-w-[480px] mx-auto transition-all"
     >
       <div className="flex items-center justify-between relative">
         {/* Home Tab */}
         <button
+          aria-current={activeTab === 'home' ? 'page' : undefined}
           onClick={() => onTabChange('home')}
           className={`flex flex-col items-center justify-center min-w-[56px] py-1 transition-transform active:scale-95 ${
             activeTab === 'home' ? 'text-[#6C4CF5]' : 'text-[#79738E]'
@@ -38,6 +39,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
         {/* Checklist Tab */}
         <button
+          aria-current={activeTab === 'checklist' ? 'page' : undefined}
           onClick={() => onTabChange('checklist')}
           className={`flex flex-col items-center justify-center min-w-[56px] py-1 transition-transform active:scale-95 ${
             activeTab === 'checklist' ? 'text-[#6C4CF5]' : 'text-[#79738E]'
@@ -53,7 +55,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         </button>
 
         {/* Center Elevated Quick Add Button */}
-        <div className="relative -top-3">
+        <div className="relative -top-1 flex flex-col items-center">
           <button
             onClick={onQuickAdd}
             className="w-13 h-13 rounded-full bg-gradient-to-tr from-[#34236B] to-[#6C4CF5] text-white flex items-center justify-center shadow-lg shadow-[#6C4CF5]/30 active:scale-90 transition-transform cursor-pointer border-4 border-white"
@@ -61,10 +63,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           >
             <Plus className="w-6 h-6 stroke-[3]" />
           </button>
+          <span className="text-[11px] font-bold text-[#34236B]">Catat</span>
         </div>
 
         {/* Shopping Wishlist Tab */}
         <button
+          aria-current={activeTab === 'shopping' ? 'page' : undefined}
           onClick={() => onTabChange('shopping')}
           className={`flex flex-col items-center justify-center min-w-[56px] py-1 transition-transform active:scale-95 ${
             activeTab === 'shopping' ? 'text-[#6C4CF5]' : 'text-[#79738E]'
@@ -81,6 +85,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
         {/* Budget Tab */}
         <button
+          aria-current={activeTab === 'budget' ? 'page' : undefined}
           onClick={() => onTabChange('budget')}
           className={`flex flex-col items-center justify-center min-w-[56px] py-1 transition-transform active:scale-95 ${
             activeTab === 'budget' ? 'text-[#6C4CF5]' : 'text-[#79738E]'

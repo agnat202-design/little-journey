@@ -1,7 +1,7 @@
 // Update this entry and its unique version whenever a user-facing feature ships.
 export const latestRelease = {
- version:'1.5.1', date:'1 November 2026',title:'Realisasi dan rencana kini lebih jelas',
- changes:['Realisasi Pengeluaran menunjukkan uang yang sudah dibayar.','Proyeksi Pengeluaran mencakup pembayaran dan rencana biaya.'],
+ version:'1.6.0', date:'1 November 2026',title:'Tampilan HP lebih ringkas dan nyaman',
+ changes:['Profil ada di atas. HPL dan laporan tersedia di menu Lainnya.','Tombol lebih mudah disentuh dan tulisan form lebih nyaman dibaca.','Lampiran tambahan bisa dibuka saat diperlukan.'],
 };
 export const releaseNoticeKey=(version:string)=>'little-journey:update-views:'+version;
 export function claimReleaseNotice(storage:Pick<Storage,'getItem'|'setItem'>,version:string):boolean {

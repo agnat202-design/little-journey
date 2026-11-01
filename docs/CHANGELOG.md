@@ -128,3 +128,6 @@ Rencana/pembayaran, pengeluaran dan dokumen mendukung satu lampiran utama + dua 
 
 ## 1 November 2026 — Label realisasi dan proyeksi
 Kartu atas Keuangan bernama Realisasi Pengeluaran dengan Sudah Dibayar; keterangannya mengecualikan rencana. Kartu bawah Proyeksi Pengeluaran mencakup pembayaran dan biaya mendatang. Nilai anggaran awal dan sisa tetap ditampilkan sebagai pembanding. Perhitungan tidak berubah. Release 1.5.1.
+
+## 1 November 2026 — Penyempurnaan mobile 1.6.0
+Header ringkas dengan logo/Profil, satu baris Jadwal-Dokumen-Lainnya; HPL dan Laporan tetap tersedia melalui Lainnya di HP. Navigasi bawah memakai safe-area, label Catat, active state tidak salah menandai Beranda di menu lain. Kontrol sentuh minimal 44 px, form 16 px di layar kecil untuk mencegah zoom iOS, focus-visible dan reduced-motion. Lampiran tambahan dilipat saat kosong. QA visual lokal memakai data contoh, bukan sesi/data produksi.

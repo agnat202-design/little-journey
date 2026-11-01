@@ -265,7 +265,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 onClick={() => onNavigateTab('shopping')}
                 className="text-xs font-black text-[#6C4CF5] hover:underline cursor-pointer"
               >
-                Buka Wishlist →
+                Lihat Belanja →
               </button>
             </div>
 

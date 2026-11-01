@@ -73,7 +73,7 @@ const QuickAddForm: React.FC<QuickAddBottomSheetProps> = ({
         </div>
 
         {/* Global chooser only; contextual add actions open their form directly. */}
-        {!initialType && <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 bg-[#F6F4EE] p-1.5 rounded-2xl mb-5">
+        {!initialType && <div className="grid grid-cols-2 min-[380px]:grid-cols-3 sm:grid-cols-5 gap-1.5 bg-[#F6F4EE] p-1.5 rounded-2xl mb-5">
           <button
             type="button"
             aria-pressed={selectedType === 'belanja'}

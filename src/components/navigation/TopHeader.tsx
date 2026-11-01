@@ -1,5 +1,3 @@
 import React from 'react';
-export const TopHeader: React.FC = () => <header className="sticky top-0 z-30 bg-[#FCFBF8]/90 backdrop-blur-md px-4 pt-3 pb-2.5 border-b border-[#F0ECE4]">
-  <p className="text-xs font-semibold text-[#79738E]">Selamat pagi 👋</p>
-  <h1 className="text-base font-extrabold text-[#292442] tracking-tight">Little Journey</h1>
-</header>;
+import {UserRound} from 'lucide-react';
+export const TopHeader:React.FC<{onProfile?:()=>void}> = ({onProfile}) => <header className="flex items-center justify-between gap-3 bg-white/95 px-4 py-3 border-b border-[#F0ECE4]"><div className="flex items-center gap-2.5"><img src="/little-journey-mark.svg" alt="" width="36" height="36" className="rounded-xl"/><div><p className="text-[11px] font-semibold text-[#79738E]">Ruang keluarga</p><h1 className="text-base font-black text-[#292442]">Little Journey</h1></div></div>{onProfile&&<button onClick={onProfile} aria-label="Buka Profil" className="flex items-center gap-1.5 rounded-full bg-[#EEE9FF] px-3 py-2 text-xs font-bold text-[#6C4CF5]"><UserRound className="w-4 h-4"/>Profil</button>}</header>;

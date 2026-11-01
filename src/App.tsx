@@ -189,17 +189,17 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
       {/* 2. MAIN APPLICATION CONTENT AREA */}
       <div className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
         {/* Mobile Sticky Top Header (Hidden on Desktop) */}
-        <div className="lg:hidden">
-          <TopHeader />
+        <div className="lg:hidden sticky top-0 z-30">
+          <TopHeader onProfile={()=>setActiveTab('profile')} />
         </div>
 
-        <div className="lg:hidden flex gap-2 px-4 py-2"><button onClick={() => setActiveTab('appointments')} className="px-3 py-1.5 rounded-full bg-[#EEE9FF] text-[#6C4CF5] text-xs font-black">Jadwal</button><button onClick={() => setActiveTab('documents')} className="px-3 py-1.5 rounded-full bg-[#F5F3ED] text-[#34236B] text-xs font-black">Dokumen</button>{runtime && <button onClick={()=>setPregnancySetup(true)} className="px-3 py-1.5 rounded-full bg-[#EEE9FF] text-[#6C4CF5] text-xs font-black">Atur HPL</button>}</div>
+        <nav aria-label="Menu tambahan" className="lg:hidden flex gap-2 px-4 py-2.5 bg-white/60"><button aria-current={activeTab==='appointments'?'page':undefined} onClick={()=>setActiveTab('appointments')} className="flex-1 rounded-xl border border-[#E9E4DC] bg-white py-2.5 text-xs font-bold text-[#34236B]">Jadwal Kontrol</button><button aria-current={activeTab==='documents'?'page':undefined} onClick={()=>setActiveTab('documents')} className="flex-1 rounded-xl border border-[#E9E4DC] bg-white py-2.5 text-xs font-bold text-[#34236B]">Dokumen</button>{runtime&&<details className="relative"><summary className="cursor-pointer list-none rounded-xl border border-[#E9E4DC] bg-white p-3 text-xs font-bold text-[#34236B]">Lainnya ▾</summary><div className="absolute right-0 top-full z-40 mt-2 w-52 rounded-2xl border border-[#E9E4DC] bg-white p-2 shadow-lg"><button onClick={()=>setPregnancySetup(true)} className="w-full text-left p-3 text-sm font-bold">Atur HPL</button><button onClick={()=>setReportOpen(true)} className="w-full text-left p-3 text-sm font-bold">Laporan Bulanan</button></div></details>}</nav>
         {/* Neutral desktop header; profiles are not configured. */}
         <header className="hidden lg:flex items-center justify-between px-8 py-4 bg-white/80 border-b border-[#F0ECE4] sticky top-0 z-20"><div><span className="text-xs font-bold text-[#79738E]">Selamat datang 👋</span><h2 className="text-lg font-black text-[#292442]">Little Journey</h2></div>{runtime && <button onClick={()=>setPregnancySetup(true)} className="px-4 py-2 rounded-full bg-[#EEE9FF] text-[#6C4CF5] text-xs font-black">Atur HPL</button>}</header>
         {control.current?.fileCleanupPending && <p role="alert" className="px-4 py-3 text-sm bg-[#FFF8DE]">Catatan tersimpan, tetapi file lama belum berhasil dihapus dari penyimpanan.</p>}
         {saveError && <div role="alert" className="fixed inset-x-4 top-4 z-[110] mx-auto max-w-xl rounded-2xl border border-[#F0C6BF] px-5 py-4 shadow-xl text-sm text-[#B14435] bg-[#FFF2EF]">{saveError} <button onClick={()=>window.location.reload()} className="mt-2 block underline font-bold">Muat ulang data</button></div>}
-        <div className="lg:hidden px-4"><button onClick={()=>setActiveTab('profile')} className="px-3 py-2 text-xs font-bold text-[#6C4CF5]">Profil</button></div>
-        {runtime && <div className="px-4 lg:px-8 py-2"><button onClick={()=>setReportOpen(true)} className="rounded-full border border-[#E9E4DC] bg-white px-4 py-2 text-xs font-bold text-[#6C4CF5]">Download Laporan Bulanan</button></div>}
+
+        {runtime && <div className="hidden lg:block px-4 lg:px-8 py-2"><button onClick={()=>setReportOpen(true)} className="rounded-full border border-[#E9E4DC] bg-white px-4 py-2 text-xs font-bold text-[#6C4CF5]">Download Laporan Bulanan</button></div>}
         <ReleaseNotice />
         <GlobalSearch records={records} tasks={checklistItems} onAttachment={setAttachment} />
         {/* Dynamic View Display */}
@@ -285,7 +285,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
             activeTab={
               activeTab === 'home' || activeTab === 'checklist' || activeTab === 'shopping' || activeTab === 'budget'
                 ? activeTab
-                : 'home'
+                : null
             }
             onTabChange={handleMobileTabChange}
             onQuickAdd={() => setIsQuickAddOpen(true)}
