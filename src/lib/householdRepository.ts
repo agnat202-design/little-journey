@@ -24,17 +24,19 @@ export class HouseholdRepository {
       return {...a, name:prepared.name, size:prepared.size, mimeType:prepared.type, storagePath:path, file:undefined};
     };
     try {
+      for(const [table,rows] of [['expenses',input.records.expenses],['documents',input.records.documents]] as const){if(rows.some(r=>r.extraAttachments?.length)){const check=await this.client.from(table).select('attachment_extras').limit(0);if(check.error)throw new Error('Multiple attachments database update required');}}
+      const uploadExtras=async(files:LocalAttachment[]|undefined)=>{const result:LocalAttachment[]=[];for(const file of files||[])result.push((await upload(file))!);return result;};
       const next:HouseholdSnapshot = {...input, allocations:input.allocations.map(a => ({...a,id:a.id || this.current.allocations.find(old => old.category===a.category)?.id || (a.planned>0?crypto.randomUUID():undefined)})),
         records:{...input.records, expenses:[],documents:[]} };
-      for(const e of input.records.expenses) next.records.expenses.push({...e,attachment:await upload(e.attachment)});
-      for(const d of input.records.documents) next.records.documents.push({...d,attachment:(await upload(d.attachment))!});
+      for(const e of input.records.expenses) next.records.expenses.push({...e,attachment:await upload(e.attachment),extraAttachments:await uploadExtras(e.extraAttachments)});
+      for(const d of input.records.documents) next.records.documents.push({...d,attachment:(await upload(d.attachment))!,extraAttachments:await uploadExtras(d.extraAttachments)});
       const {data,error} = await this.client.rpc('save_household_changes',{
         p_household_id:this.current.householdId,p_version:this.current.version,p_changes:householdChanges(this.current,next),
         p_budget:input.totalBudget!==this.current.totalBudget || input.budgetConfigured!==this.current.budgetConfigured
           ? {total_budget:input.budgetConfigured?input.totalBudget:null} : null,
       });
       if(error || !data) throw error || new Error('Unable to save household');
-      const filePaths=(snapshot:HouseholdSnapshot)=>[...snapshot.records.expenses.map(r=>r.attachment?.storagePath),...snapshot.records.documents.map(r=>r.attachment.storagePath)].filter((p):p is string=>!!p);
+      const filePaths=(snapshot:HouseholdSnapshot)=>[...[...snapshot.records.expenses,...snapshot.records.documents].flatMap(r=>(r.extraAttachments||[]).map(a=>a.storagePath)),...snapshot.records.expenses.map(r=>r.attachment?.storagePath),...snapshot.records.documents.map(r=>r.attachment.storagePath)].filter((p):p is string=>!!p);
       const retained=new Set(filePaths(next));
       const obsolete=filePaths(this.current).filter(p=>!retained.has(p));
       this.current = decodeHousehold(data);

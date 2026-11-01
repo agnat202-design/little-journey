@@ -151,6 +151,7 @@ export interface Expense {
   shoppingItemId?: string; // Foreign link to ShoppingItem to prevent double-counting
   source?: 'shopping' | 'manual';
   attachment?: LocalAttachment;
+  extraAttachments?: LocalAttachment[];
   category: string;
   title: string;
   totalAmount: number; // Total contracted or estimated cost (e.g. Hospital package Rp 25.000.000)
@@ -195,6 +196,7 @@ export interface DocumentRecord {
   documentType: 'USG' | 'Hasil Lab' | 'Dokumen Kontrol' | 'Invoice' | 'Receipt' | 'Resep' | 'Lainnya';
   documentDate?: string;
   attachment: LocalAttachment;
+  extraAttachments?: LocalAttachment[];
 }
 
 // Local preview data is separate from a future storage object key.

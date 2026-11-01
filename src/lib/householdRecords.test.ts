@@ -97,3 +97,17 @@ console.log('PASS image upload compression, dimensions, metadata, PDF preservati
 
 const plannedRaw=decodeHousehold({...raw,expenses:[{id:'future',title:'Future vaccine',paid_amount:0,total_amount:1000000,expense_date:'2026-12-01',source:'manual'}]});
 assert.equal(plannedRaw.records.expenses[0].paymentStatus,'Unpaid');assert.equal(encodeHousehold(plannedRaw).expenses[0].total_amount,1000000);assert.equal(expenseBudget(2000000,plannedRaw.records).projectedFinalCost,1000000);
+
+const multiRaw=decodeHousehold({...raw,expenses:[{id:'multi',title:'Receipts',paid_amount:1,expense_date:'2026-11-01',source:'manual',attachment_extras:[{storage_path:householdId+'/two',file_name:'two.pdf',mime_type:'application/pdf',size_bytes:22}]}]});
+assert.equal(multiRaw.records.expenses[0].extraAttachments?.[0].name,'two.pdf');assert.equal(encodeHousehold(multiRaw).expenses[0].attachment_extras?.[0].storage_path,householdId+'/two');
+
+(client as any).from=()=>({select:()=>({limit:async()=>({error:null})})});
+fail=false;
+const multiRepo=await HouseholdRepository.load(client,householdId);
+const multiInput={...next,records:{...next.records,documents:[{...next.records.documents[0],extraAttachments:[{...next.records.documents[0].attachment,id:'extra-1'},{...next.records.documents[0].attachment,id:'extra-2'}]}]}};
+const savedMulti=await multiRepo.save(multiInput);
+assert.equal(savedMulti.records.documents[0].extraAttachments?.length,2);
+assert.ok(savedMulti.records.documents[0].extraAttachments?.every(a=>a.storagePath&&!a.file));
+fail=true;const failureRepo=await HouseholdRepository.load(client,householdId);
+await assert.rejects(failureRepo.save(multiInput));assert.equal(removed.at(-1)?.length,3,'All three uncommitted files cleaned on failure');
+console.log('PASS three-file upload metadata roundtrip and rollback cleanup');

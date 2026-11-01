@@ -30,6 +30,7 @@ try {
  await db.exec(await readFile('supabase/migrations/202610030001_household_schema.sql','utf8'));
  await db.exec(await readFile('supabase/migrations/202610040001_mvp_persistence.sql','utf8'));
  await db.exec(await readFile('supabase/migrations/202611010001_planned_costs.sql','utf8'));
+ await db.exec(await readFile('supabase/migrations/202611010002_multiple_attachments.sql','utf8'));
  const owner=randomUUID(), stranger=randomUUID(), member=randomUUID();
  for(const id of [owner,stranger,member])await q('INSERT INTO auth.users VALUES($1)',[id]);
  const setup=(id,name)=>user(id,async()=> (await q('SELECT public.setup_household($1,$2,$3) AS id',[name,'User input','2027-01-01'])).rows[0].id);
@@ -104,6 +105,14 @@ try {
   await assert.rejects(save([up('expenses',id,{...row,paid_amount:21000000})]),e=>e.code==='23514');
   snapshot=await save([up('expenses',id,{...row,paid_amount:19000000,total_amount:null,expense_date:'2027-02-11'})]);
   assert.equal(snapshot.expenses.filter(e=>e.id===id).length,1);assert.equal(snapshot.expenses.find(e=>e.id===id).paid_amount,19000000);
+ });
+ await test('Extra receipts persist and reject cross-household paths or too many files',async()=>{
+  const id=randomUUID();const file={storage_path:h+'/receipt2',file_name:'receipt2.jpg',mime_type:'image/jpeg',size_bytes:123};
+  const row={title:'Paid vaccine',paid_amount:1000,expense_date:'2026-11-01',source:'manual',attachment_extras:[file,{...file,storage_path:h+'/receipt3'}]};
+  snapshot=await save([up('expenses',id,row)]);assert.equal(snapshot.expenses.find(e=>e.id===id).attachment_extras.length,2);
+  await assert.rejects(save([up('expenses',id,{...row,attachment_extras:[{...file,storage_path:other+'/bad'}]})]),e=>e.code==='23514');
+  await assert.rejects(save([up('expenses',id,{...row,attachment_extras:[file,file,file]})]),e=>e.code==='23514');
+  snapshot=await save([up('expenses',id,{...row,attachment_extras:null})]);assert.equal(snapshot.expenses.find(e=>e.id===id).attachment_extras,null);
  });
  console.log(`Persistence SQL: ${count} groups passed`);
 }finally{await db.close();}

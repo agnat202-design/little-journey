@@ -19,6 +19,8 @@ export interface HouseholdSnapshot {
 export type DatabaseSnapshot = Record<string, any>;
 const empty = (value: unknown) => value ?? null;
 const optional = (value: any) => value === null ? undefined : value;
+const extras=(row:any):LocalAttachment[] => (row.attachment_extras||[]).map((a:any)=>({id:a.storage_path,storagePath:a.storage_path,name:a.file_name,mimeType:a.mime_type,size:Number(a.size_bytes)}));
+const encodeExtras=(files:LocalAttachment[]|undefined)=>files?.length?{attachment_extras:files.map(a=>({storage_path:a.storagePath,file_name:a.name,mime_type:a.mimeType,size_bytes:a.size}))}:{};
 function attachment(row: any, prefix=''): LocalAttachment | undefined {
   const path = row[prefix + 'storage_path'];
   return path ? { id: path, storagePath: path, name: row[prefix + 'file_name'], mimeType: row[prefix + 'mime_type'], size: Number(row[prefix ? 'attachment_size_bytes' : 'size_bytes']) } : undefined;
@@ -28,7 +30,7 @@ export function decodeHousehold(raw: DatabaseSnapshot): HouseholdSnapshot {
   const common = (r: any) => ({ id: r.id, householdId: h.id, childId: optional(r.child_id), pregnancyId: optional(r.pregnancy_id), stage: optional(r.stage) });
   const expenses = raw.expenses.map((r: any) => ({ ...common(r), title: r.title, category: r.category || '', notes: optional(r.notes),
     paidAmount: Number(r.paid_amount), totalAmount: Number(r.total_amount ?? r.paid_amount), paymentStatus: (Number(r.total_amount ?? r.paid_amount)>Number(r.paid_amount) ? (Number(r.paid_amount)>0?'Partially Paid':'Unpaid') : 'Paid') as 'Paid'|'Unpaid'|'Partially Paid',
-    expenseDate: r.expense_date, source: r.source, shoppingItemId: optional(r.shopping_item_id), attachment: attachment(r,'attachment_') }));
+    expenseDate: r.expense_date, source: r.source, shoppingItemId: optional(r.shopping_item_id), extraAttachments:extras(r), attachment: attachment(r,'attachment_') }));
   const shoppingItems: ShoppingItem[] = raw.shopping_items.map((r: any) => {
     const purchase = expenses.find((e: any) => e.shoppingItemId === r.id);
     const price = r.estimated_unit_price === null ? undefined : Number(r.estimated_unit_price) * r.quantity;
@@ -48,7 +50,7 @@ export function decodeHousehold(raw: DatabaseSnapshot): HouseholdSnapshot {
       appointments:raw.appointments.map((r:any) => ({ ...common(r), purpose:r.purpose, doctor:r.doctor || '', hospital:r.hospital || '',
         appointmentDate:r.appointment_date, appointmentTime:r.appointment_time?.slice(0,5), notes:optional(r.notes), targetGestationalWeek:optional(r.target_gestational_week) })),
       documents:raw.documents.map((r:any) => ({ ...common(r), title:r.title, category:r.document_type, documentType:r.document_type, documentDate:optional(r.document_date),
-        notes:optional(r.notes), attachment:attachment(r)!, fileName:r.file_name, fileSize:Number(r.size_bytes), fileUrl:'' })),
+        notes:optional(r.notes), extraAttachments:extras(r), attachment:attachment(r)!, fileName:r.file_name, fileSize:Number(r.size_bytes), fileUrl:'' })),
     } };
 }
 export function encodeHousehold(s: HouseholdSnapshot) {
@@ -61,10 +63,10 @@ export function encodeHousehold(s: HouseholdSnapshot) {
     shopping_items:s.records.shoppingItems.map(r => ({ ...context(r), ...timing(r), item:r.item, category:empty(r.category), brand:empty(r.brand), model:empty(r.model), store:empty(r.store), notes:empty(r.notes),
       quantity:r.quantity, estimated_unit_price:r.estimatedPrice === undefined ? null : r.estimatedPrice/r.quantity, product_url:empty(r.productUrl), priority:r.priority, status:r.status })),
     expenses:s.records.expenses.map(r => ({ ...context(r), title:r.title, category:empty(r.category), notes:empty(r.notes), paid_amount:r.paidAmount, ...(r.totalAmount !== r.paidAmount ? {total_amount:r.totalAmount} : {}), expense_date:r.expenseDate,
-      source:r.source || 'manual', shopping_item_id:empty(r.shoppingItemId), ...file(r.attachment,'attachment_') })),
+      source:r.source || 'manual', shopping_item_id:empty(r.shoppingItemId), ...file(r.attachment,'attachment_'),...encodeExtras(r.extraAttachments) })),
     appointments:s.records.appointments.map(r => ({ ...context(r), purpose:r.purpose, doctor:empty(r.doctor), hospital:empty(r.hospital), notes:empty(r.notes), appointment_date:r.appointmentDate,
       appointment_time:empty(r.appointmentTime), target_gestational_week:empty(r.targetGestationalWeek) })),
-    documents:s.records.documents.map(r => ({ ...context(r), title:r.title, document_type:r.documentType, document_date:empty(r.documentDate), notes:empty(r.notes), ...file(r.attachment) })),
+    documents:s.records.documents.map(r => ({ ...context(r), title:r.title, document_type:r.documentType, document_date:empty(r.documentDate), notes:empty(r.notes), ...file(r.attachment),...encodeExtras(r.extraAttachments) })),
     budget_category_allocations:s.allocations.filter(r => r.id || r.planned>0).map(r => ({ id:r.id!, category:r.category, planned_amount:r.planned })),
   };
 }
