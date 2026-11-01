@@ -125,3 +125,6 @@ Expense total_amount nullable ditambahkan secara additive melalui 202611010001_p
 
 ## 1 November 2026 — Struk tambahan dan tanda rencana
 Rencana/pembayaran, pengeluaran dan dokumen mendukung satu lampiran utama + dua tambahan (maksimal 3 total). Tambahan disimpan attachment_extras JSONB dengan validasi jalur household, jumlah dan ukuran; RPC whitelist diperbarui. Upload baru dikompres sebagaimana lampiran utama, rollback membersihkan file baru, cleanup file lama baru setelah metadata tersimpan. Rencana belum dibayar berwarna merah muda dengan label teks. Migrasi 202611010002_multiple_attachments.sql diperlukan setelah 001; aktivasi produksi belum dilakukan.
+
+## 1 November 2026 — Label realisasi dan proyeksi
+Kartu atas Keuangan bernama Realisasi Pengeluaran dengan Sudah Dibayar; keterangannya mengecualikan rencana. Kartu bawah Proyeksi Pengeluaran mencakup pembayaran dan biaya mendatang. Nilai anggaran awal dan sisa tetap ditampilkan sebagai pembanding. Perhitungan tidak berubah. Release 1.5.1.
