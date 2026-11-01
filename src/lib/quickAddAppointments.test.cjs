@@ -74,7 +74,7 @@ test('Initial empty records contain no invented personal data or misleading sess
   nav('budget'); const budget = view('BudgetView');
   assert.equal(budget.props.budgetSummary.totalBudget, 0); assert.equal(budget.props.budgetSummary.actualPaid, 0);
   assert.equal(budget.props.isBudgetConfigured, false);
-  assert.ok(text(render(budget.type, budget.props)).includes('Atur budget pertama kamu'));
+  assert.ok(text(render(budget.type, budget.props)).includes('Atur anggaran keluarga terlebih dahulu'));
   nav('documents'); assert.equal(view('DocumentsView').props.documents.length, 0);
 });
 
@@ -345,7 +345,7 @@ test('An explicitly configured zero Budget differs from an unconfigured Budget',
   field(form, 'budget-total', '0'); form = render(wrapper.type, wrapper.props); submit(form);
   const budget = view('BudgetView'); assert.equal(budget.props.isBudgetConfigured, true);
   assert.equal(budget.props.budgetSummary.totalBudget, 0);
-  assert.ok(!text(render(budget.type, budget.props)).includes('Atur budget pertama kamu'));
+  assert.ok(!text(render(budget.type, budget.props)).includes('Atur anggaran keluarga terlebih dahulu'));
 });
 
 test('Budget category totals include all actual Expense categories without double counting', () => {

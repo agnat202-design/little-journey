@@ -1,11 +1,11 @@
 // Update this entry and its unique version whenever a user-facing feature ships.
 export const latestRelease = {
- version:'1.2.0', date:'1 November 2026',
- title:'Tambah catatan sekarang lebih langsung',
+ version:'1.3.0', date:'1 November 2026',
+ title:'Menu lebih mudah dipahami',
  changes:[
-  'Tambah Barang langsung membuka form barang.',
-  'Tambah Checklist langsung membuka form checklist tanpa pilihan lain.',
-  'Dokumen sekarang bisa ditambahkan dari Catat Cepat.',
+  'Nama menu lebih jelas: Beranda, Belanja, Keuangan, Jadwal Kontrol, dan Dokumen.',
+  'Kategori memakai bahasa Indonesia, seperti Kesehatan dan Perlengkapan anak.',
+  'Tombol Tambah Barang ada di atas daftar. Checklist dilengkapi petunjuk singkat.',
  ],
 };
 export const releaseNoticeKey=(version:string)=>'little-journey:update-views:'+version;

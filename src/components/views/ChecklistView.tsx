@@ -1,3 +1,4 @@
+import { categoryLabel, priorityLabel } from '../../lib/plainLabels';
 import { displayDate } from '../../lib/familyRecords';
 import React, { useState } from 'react';
 import { ChecklistItem } from '../../types/domain';
@@ -49,6 +50,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
             <h1 className="text-xl sm:text-2xl font-black text-[#292442] mt-1.5">
               Checklist
             </h1>
+            <p className="text-xs text-[#79738E] mt-1">Daftar hal yang perlu disiapkan. Centang jika sudah selesai.</p>
             <p className="text-xs sm:text-sm font-bold text-[#79738E] mt-0.5">
               {completedCount} dari {items.length} item selesai ({progressPercent}%)
             </p>
@@ -76,7 +78,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
       <label className="block text-xs font-bold text-[#79738E]">Kategori
         <select aria-label="Filter kategori checklist" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="mt-1 block w-full sm:max-w-xs rounded-2xl border border-[#EBE6DC] bg-white p-3 text-[#292442]">
           <option value="All">Semua kategori</option>
-          {categories.map(category => <option key={category} value={category}>{category}</option>)}
+          {categories.map(category => <option key={category} value={category}>{categoryLabel(category)}</option>)}
         </select>
       </label>
 
@@ -145,7 +147,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                     <div className="flex items-center gap-2 mt-2 flex-wrap">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black ${catStyle.bg} ${catStyle.text}`}>
                         <span>{catStyle.icon}</span>
-                        <span>{task.category}</span>
+                        <span>{categoryLabel(task.category)}</span>
                       </span>
 
 
@@ -161,7 +163,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                       : 'bg-[#F5F3ED] text-[#79738E]'
                   }`}
                 >
-                  {task.priority}
+                  {priorityLabel(task.priority)}
                 </span>
                 <button type="button" onClick={() => onEditItem(task)} className="text-xs font-bold text-[#6C4CF5] px-2 py-1">Edit</button>
                 <button type="button" onClick={() => onDeleteItem(task)} className="text-xs font-bold text-[#B14435] px-2 py-1">Hapus</button>

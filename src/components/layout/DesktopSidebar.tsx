@@ -41,16 +41,16 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   isDemo = true,
 }) => {
   const primaryNav = [
-    { key: 'home' as const, label: 'Home', icon: Home },
+    { key: 'home' as const, label: 'Beranda', icon: Home },
     { key: 'checklist' as const, label: 'Checklist', icon: CheckSquare },
-    { key: 'shopping' as const, label: 'Shopping', icon: ShoppingBag },
-    { key: 'budget' as const, label: 'Budget', icon: PieChart },
+    { key: 'shopping' as const, label: 'Belanja', icon: ShoppingBag },
+    { key: 'budget' as const, label: 'Keuangan', icon: PieChart },
 
   ];
 
   const secondaryNav = [
-    { key: 'appointments' as const, label: 'Appointments', icon: Stethoscope },
-    { key: 'documents' as const, label: 'Documents', icon: FolderOpen },
+    { key: 'appointments' as const, label: 'Jadwal Kontrol', icon: Stethoscope },
+    { key: 'documents' as const, label: 'Dokumen', icon: FolderOpen },
     { key: 'profile' as const, label: 'Profil', icon: Home },
 
   ];
@@ -71,7 +71,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
               Little Journey
             </h1>
             <span className="text-[11px] font-extrabold text-[#6C4CF5] bg-[#EEE9FF] px-2 py-0.5 rounded-full inline-block mt-1">
-              {currentWeek===undefined?'Keluarga':`${isDemo?'Demo • ':''}W${currentWeek} • D${currentDay}`}
+              {currentWeek===undefined?'Keluarga':`${isDemo?'Demo • ':''}Minggu ${currentWeek} • ${currentDay} hari`}
             </span>
           </div>
         </div>
@@ -82,7 +82,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           className="w-full py-3.5 px-4 mb-6 rounded-2xl bg-gradient-to-r from-[#34236B] to-[#6C4CF5] text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#6C4CF5]/25 hover:opacity-95 active:scale-98 transition-all cursor-pointer"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />
-          <span>+ Catat Cepat</span>
+          <span>Catat Cepat</span>
         </button>
 
         {/* Primary Navigation List */}
@@ -96,6 +96,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             return (
               <button
                 key={item.key}
+                aria-current={isActive ? 'page' : undefined}
                 onClick={() => onTabChange(item.key)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-extrabold transition-all cursor-pointer ${
                   isActive

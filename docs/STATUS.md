@@ -54,3 +54,6 @@ Banner kecil non-modal setelah login, dapat ditutup; maksimal 3 kali per versi p
 
 ## 1 November 2026 — Tambah sesuai konteks
 Audit tombol tambah: Shopping langsung RecordEditor shopping; Checklist form khusus tanpa pemilih jenis; Budget, Jadwal dan Dokumen tetap langsung form masing-masing. Catat Cepat global desktop/mobile menyediakan lima pilihan termasuk Dokumen dan memulai netral setiap dibuka. Dokumen memakai upload/persistensi yang sama. Release notice 1.2.0 diperbarui dan ringkasan banner kini mengikuti sumber versi.
+
+## 1 November 2026 — Bahasa menu lebih sederhana
+Navigasi desktop/mobile: Beranda, Checklist, Belanja, Keuangan, Jadwal Kontrol, Dokumen, Profil. Label kategori dan prioritas diterjemahkan untuk tampilan tanpa mengubah nilai database; istilah anggaran diperjelas. Tombol Tambah Barang dipindah ke atas daftar; petunjuk centang ditambahkan di Checklist; badge minggu/hari tanpa singkatan W/D. Release 1.3.0. Tidak mengubah perhitungan atau migrasi data.

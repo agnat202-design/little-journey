@@ -1,0 +1,3 @@
+// Display labels only: persisted values stay compatible with existing data.
+export function categoryLabel(value:string){return ({Pregnancy:'Kehamilan',Mother:'Kebutuhan ibu',Medical:'Kesehatan','Hospital / Delivery':'Rumah sakit & persalinan','Hospital bag':'Tas persalinan','Baby clothing':'Pakaian anak',Feeding:'Makan & menyusui',Documents:'Dokumen','Baby Gear':'Perlengkapan anak',Travel:'Bepergian',Sleeping:'Tidur',Diapering:'Popok',Bathing:'Mandi',Safety:'Keamanan',Other:'Lainnya'} as Record<string,string>)[value]||value;}
+export function priorityLabel(value:string){return value==='High'?'Penting':value==='Low'?'Bisa nanti':'Biasa';}

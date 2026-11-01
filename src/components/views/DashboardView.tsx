@@ -1,3 +1,4 @@
+import { priorityLabel } from '../../lib/plainLabels';
 import React from 'react';
 import { PipMascot } from '../mascot/PipMascot';
 import {
@@ -75,7 +76,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           {/* 2. BUDGET OVERVIEW (3-Second Financial Clarity in IDR) */}
           <section 
-            aria-label="Ringkasan Budget"
+            aria-label="Ringkasan Keuangan"
             className="bg-white rounded-[28px] p-5 sm:p-6 border border-[#F0ECE4] shadow-xs"
           >
             <div className="flex items-center justify-between mb-2">
@@ -93,13 +94,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
                 <span className="text-[10px] text-[#79738E] font-bold block mt-0.5">
                   Belanja Barang: {formatIDR(shoppingSpent)} • lihat Riwayat Pengeluaran
-                  {!isBudgetConfigured && <span className="block">Atur budget pertama kamu.</span>}
+                  {!isBudgetConfigured && <span className="block">Atur anggaran keluarga terlebih dahulu.</span>}
                 </span>
               </div>
               <button
                 onClick={() => onNavigateTab('budget')}
                 className="p-2.5 rounded-2xl bg-[#EEE9FF] text-[#6C4CF5] hover:bg-[#6C4CF5] hover:text-white transition-colors cursor-pointer"
-                aria-label="Buka Rincian Budget"
+                aria-label="Buka Rincian Keuangan"
               >
                 <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </button>
@@ -115,11 +116,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="grid grid-cols-2 gap-3 pt-2 text-xs border-t border-[#F5F2EA]">
               <div>
-                <span className="text-[#79738E] font-bold block text-[10px] uppercase">Total Budget</span>
+                <span className="text-[#79738E] font-bold block text-[10px] uppercase">Total Anggaran</span>
                 <span className="font-black text-[#292442] text-sm">{isBudgetConfigured ? formatIDR(budgetSummary.totalBudget) : '-'}</span>
               </div>
               <div className="text-right">
-                <span className="text-[#79738E] font-bold block text-[10px] uppercase">Sisa Budget</span>
+                <span className="text-[#79738E] font-bold block text-[10px] uppercase">Sisa Anggaran</span>
                 <span className="font-black text-[#1EA896] text-sm">{isBudgetConfigured ? formatIDR(budgetSummary.remainingBudget) : '-'}</span>
               </div>
             </div>
@@ -343,7 +344,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           : 'bg-[#EEE9FF] text-[#6C4CF5]'
                       }`}
                     >
-                      {task.priority}
+                      {priorityLabel(task.priority)}
                     </span>
                   </div>
                 );
