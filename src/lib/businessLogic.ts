@@ -58,7 +58,7 @@ export function calculateBudget(
   let outstanding = 0;
 
   for (const exp of expenses) {
-    if (exp.paymentStatus === 'Partially Paid' || (exp.totalAmount > exp.paidAmount && exp.paidAmount > 0)) {
+    if (exp.totalAmount > exp.paidAmount) {
       totalCommitted += exp.totalAmount;
       outstanding += Math.max(0, exp.totalAmount - exp.paidAmount);
     }

@@ -94,6 +94,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
                 <span className="text-[10px] text-[#79738E] font-bold block mt-0.5">
                   Belanja Barang: {formatIDR(shoppingSpent)} • lihat Riwayat Pengeluaran
+                  <span className="block">Perkiraan total termasuk rencana: {formatIDR(budgetSummary.projectedFinalCost)}</span>
                   {!isBudgetConfigured && <span className="block">Atur anggaran keluarga terlebih dahulu.</span>}
                 </span>
               </div>

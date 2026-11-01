@@ -35,3 +35,6 @@ Storage binary in private family-files, household-prefixed paths. Postgres holds
 
 ## QA
 23 schema checks and 9 persistence groups passed locally. Real records verified in production; all production mutation/attachment/isolation scenarios not yet covered. [QA evidence](MVP_PERSISTENCE_QA.md).
+
+## 1 November 2026 — Rencana Biaya (aktivasi database diperlukan)
+Expense total_amount nullable ditambahkan secara additive melalui 202611010001_planned_costs.sql dan whitelist RPC diperbarui. Null berarti biaya sama dengan paid_amount untuk kompatibilitas transaksi lama. Rencana manual: paid_amount=0, total_amount>0, expense_date=rencana tanggal bayar. Keuangan/Beranda menampilkan proyeksi actual + outstanding + rencana barang; tidak dianggap pengeluaran sampai dibayar. Pembayaran penuh mengubah record yang sama dan tanggal menjadi tanggal bayar, mendukung nominal aktual berbeda tanpa double count; cicilan/multi-payment ledger belum tersedia. Edit/hapus rencana tersedia. Laporan memisahkan rencana snapshot dari transaksi bulan, JSON mencakup total. Modal memeriksa kolom sebelum menyimpan agar schema lama tidak menghilangkan rencana diam-diam. Migrasi produksi belum dijalankan/diverifikasi.

@@ -94,3 +94,6 @@ try {
  assert.equal(attachmentLabel({mimeType:'image/jpeg',size:512000}),'Foto • 500 KB');
 } finally { (globalThis as any).Image=originalImage;(globalThis as any).document=originalDocument;URL.createObjectURL=originalCreate;URL.revokeObjectURL=originalRevoke; }
 console.log('PASS image upload compression, dimensions, metadata, PDF preservation, URL cleanup');
+
+const plannedRaw=decodeHousehold({...raw,expenses:[{id:'future',title:'Future vaccine',paid_amount:0,total_amount:1000000,expense_date:'2026-12-01',source:'manual'}]});
+assert.equal(plannedRaw.records.expenses[0].paymentStatus,'Unpaid');assert.equal(encodeHousehold(plannedRaw).expenses[0].total_amount,1000000);assert.equal(expenseBudget(2000000,plannedRaw.records).projectedFinalCost,1000000);

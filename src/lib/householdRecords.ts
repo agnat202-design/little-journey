@@ -27,7 +27,7 @@ export function decodeHousehold(raw: DatabaseSnapshot): HouseholdSnapshot {
   const h = raw.household;
   const common = (r: any) => ({ id: r.id, householdId: h.id, childId: optional(r.child_id), pregnancyId: optional(r.pregnancy_id), stage: optional(r.stage) });
   const expenses = raw.expenses.map((r: any) => ({ ...common(r), title: r.title, category: r.category || '', notes: optional(r.notes),
-    paidAmount: Number(r.paid_amount), totalAmount: Number(r.paid_amount), paymentStatus: 'Paid' as const,
+    paidAmount: Number(r.paid_amount), totalAmount: Number(r.total_amount ?? r.paid_amount), paymentStatus: (Number(r.total_amount ?? r.paid_amount)>Number(r.paid_amount) ? (Number(r.paid_amount)>0?'Partially Paid':'Unpaid') : 'Paid') as 'Paid'|'Unpaid'|'Partially Paid',
     expenseDate: r.expense_date, source: r.source, shoppingItemId: optional(r.shopping_item_id), attachment: attachment(r,'attachment_') }));
   const shoppingItems: ShoppingItem[] = raw.shopping_items.map((r: any) => {
     const purchase = expenses.find((e: any) => e.shoppingItemId === r.id);
@@ -60,7 +60,7 @@ export function encodeHousehold(s: HouseholdSnapshot) {
     tasks:s.tasks.map(r => ({ ...context(r), ...timing(r), name:r.name, category:empty(r.category), notes:empty(r.notes), priority:r.priority, status:r.status, assigned_member_id:empty(r.assignedTo) })),
     shopping_items:s.records.shoppingItems.map(r => ({ ...context(r), ...timing(r), item:r.item, category:empty(r.category), brand:empty(r.brand), model:empty(r.model), store:empty(r.store), notes:empty(r.notes),
       quantity:r.quantity, estimated_unit_price:r.estimatedPrice === undefined ? null : r.estimatedPrice/r.quantity, product_url:empty(r.productUrl), priority:r.priority, status:r.status })),
-    expenses:s.records.expenses.map(r => ({ ...context(r), title:r.title, category:empty(r.category), notes:empty(r.notes), paid_amount:r.paidAmount, expense_date:r.expenseDate,
+    expenses:s.records.expenses.map(r => ({ ...context(r), title:r.title, category:empty(r.category), notes:empty(r.notes), paid_amount:r.paidAmount, ...(r.totalAmount !== r.paidAmount ? {total_amount:r.totalAmount} : {}), expense_date:r.expenseDate,
       source:r.source || 'manual', shopping_item_id:empty(r.shoppingItemId), ...file(r.attachment,'attachment_') })),
     appointments:s.records.appointments.map(r => ({ ...context(r), purpose:r.purpose, doctor:empty(r.doctor), hospital:empty(r.hospital), notes:empty(r.notes), appointment_date:r.appointmentDate,
       appointment_time:empty(r.appointmentTime), target_gestational_week:empty(r.targetGestationalWeek) })),

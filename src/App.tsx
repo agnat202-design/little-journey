@@ -1,3 +1,4 @@
+import { CostPlanModal } from './components/modals/CostPlanModal';
 import { ReleaseNotice } from './components/ReleaseNotice';
 import { GlobalSearch } from './components/GlobalSearch';
 import { MonthlyReportModal } from './components/modals/MonthlyReportModal';
@@ -34,6 +35,7 @@ import { TaskEditor } from './components/modals/TaskEditor';
 import { PregnancySetup } from './components/modals/PregnancySetup';
 
 export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime; onLogout?:()=>Promise<boolean> } = {}) {
+  const [costPlan,setCostPlan]=useState<{expense?:Expense;paying?:boolean}|null>(null);
   const [reportOpen,setReportOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<DesktopNavKey>('home');
   // Active Lifecycle Stage (MVP is 'pregnancy'; future-ready for birth, newborn, etc.)
@@ -246,6 +248,9 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
           {activeTab === 'budget' && (
             <BudgetView
               isBudgetConfigured={isBudgetConfigured}
+              onAddPlan={() => setCostPlan({})}
+              onEditPlan={expense => setCostPlan({expense})}
+              onPayPlan={expense => setCostPlan({expense,paying:true})}
               onAddExpense={() => setEditor({ kind: 'expense' })}
               onEditExpense={record => setEditor({ kind: 'expense', record })}
               onDeleteExpense={requestExpenseDelete}
@@ -297,6 +302,11 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
         activeStage={activeStage}
       />
 
+      {costPlan && <CostPlanModal expense={costPlan.expense} paying={costPlan.paying} client={runtime?.client} onClose={()=>setCostPlan(null)} onSave={data=>{
+        const old=costPlan.expense;
+        const next:Expense={...old,id:old?.id||crypto.randomUUID(),...context,stage:old?.stage||activeStage,source:'manual',title:data.title,category:data.category,notes:data.notes,totalAmount:data.amount,paidAmount:costPlan.paying?data.amount:0,paymentStatus:costPlan.paying?'Paid':'Unpaid',expenseDate:data.date};
+        return setRecords(prev=>({...prev,expenses:[next,...prev.expenses.filter(e=>e.id!==next.id)]}));
+      }}/>}
       {editor && <RecordEditor key={editor.kind + (editor.record?.id || 'new')} kind={editor.kind} record={editor.record} template={editor.template} stage={editor.record?.stage || activeStage} onSave={data => saveRecord(editor.kind, data, editor.record)} onClose={() => setEditor(null)} />}
       {confirmation && <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-xs flex items-center justify-center p-4"><div role="dialog" aria-modal="true" aria-labelledby="confirmation-title" className="bg-white rounded-[28px] p-6 w-full max-w-md shadow-xl space-y-4"><h2 id="confirmation-title" className="text-lg font-black text-[#292442]">{confirmation.title}</h2><p className="text-sm text-[#79738E]">{confirmation.body}</p><div className="space-y-2">{confirmation.actions.map(action => <button key={action.label} onClick={() => { action.run(); setConfirmation(null); }} className="block w-full px-4 py-3 rounded-2xl bg-[#34236B] text-white text-xs font-black">{action.label}</button>)}<button onClick={() => setConfirmation(null)} className="w-full py-2 text-xs font-bold text-[#79738E]">Batal</button></div></div></div>}
       {expenseDetail && <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4"><div role="dialog" aria-modal="true" aria-labelledby="expense-detail-title" className="bg-white rounded-[28px] p-6 w-full max-w-md space-y-3"><div className="flex items-start justify-between"><h2 id="expense-detail-title" className="font-black text-[#292442]">{expenseDetail.title}</h2><button aria-label="Tutup Detail" onClick={() => setExpenseDetail(null)}>✕</button></div><p className="text-sm text-[#79738E]">{displayDate(expenseDetail.expenseDate)} • {expenseDetail.category || 'Tanpa kategori'}</p><p className="font-black text-[#34236B]">Rp {expenseDetail.paidAmount.toLocaleString('id-ID')}</p>{expenseDetail.notes && <p className="text-sm text-[#79738E]">{expenseDetail.notes}</p>}{expenseDetail.attachment && <button onClick={() => setAttachment(expenseDetail.attachment!)} className="px-3 py-2 rounded-xl bg-[#EEE9FF] text-[#6C4CF5] font-black text-xs">Lihat Lampiran</button>}</div></div>}

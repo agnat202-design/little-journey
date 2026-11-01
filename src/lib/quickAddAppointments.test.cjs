@@ -335,6 +335,14 @@ test('Documents add/view/edit/delete with local file metadata and required file'
   list.props.onDelete(list.props.documents[0]); assert.equal(view('DocumentsView').props.documents.length, 1); confirm('Hapus'); assert.equal(view('DocumentsView').props.documents.length, 0);
 });
 
+test('Future medical cost affects projection, not actual; payment replaces the same plan', () => {
+ nav('budget');view('BudgetView').props.onAddPlan();let modal=view('CostPlanModal');modal.props.onSave({title:'Persalinan',amount:20000000,date:'2027-02-10',category:'Hospital / Delivery',notes:'Paket RS'});
+ let budget=view('BudgetView');assert.equal(budget.props.budgetSummary.actualPaid,0);assert.equal(budget.props.budgetSummary.projectedFinalCost,20000000);const plan=budget.props.expenses[0];assert.equal(plan.paymentStatus,'Unpaid');
+ assert.ok(!text(find(render(budget.type,budget.props),n=>n.props.id==='expense-history')).includes('Persalinan'));
+ budget.props.onPayPlan(plan);modal=view('CostPlanModal');modal.props.onSave({title:'Persalinan',amount:19000000,date:'2027-02-11',category:plan.category});
+ budget=view('BudgetView');assert.equal(budget.props.expenses.length,1);assert.equal(budget.props.expenses[0].id,plan.id);assert.equal(budget.props.budgetSummary.actualPaid,19000000);assert.equal(budget.props.budgetSummary.projectedFinalCost,19000000);
+});
+
 test('Total-only Budget setup saves with no category allocation requirement', () => {
   nav('budget'); view('BudgetView').props.onOpenBudgetSetup(); const modal = view('BudgetSetupModal'); const wrapper = render(modal.type, { ...modal.props, currentCategories: [] }); let form = render(wrapper.type, wrapper.props); field(form, 'budget-total', '40000000'); form = render(wrapper.type, wrapper.props); submit(form); assert.equal(view('BudgetView').props.budgetSummary.totalBudget, 40000000);
 });

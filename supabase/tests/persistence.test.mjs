@@ -29,6 +29,7 @@ try {
  GRANT USAGE ON SCHEMA storage TO authenticated;GRANT SELECT,INSERT,DELETE ON storage.objects TO authenticated;`);
  await db.exec(await readFile('supabase/migrations/202610030001_household_schema.sql','utf8'));
  await db.exec(await readFile('supabase/migrations/202610040001_mvp_persistence.sql','utf8'));
+ await db.exec(await readFile('supabase/migrations/202611010001_planned_costs.sql','utf8'));
  const owner=randomUUID(), stranger=randomUUID(), member=randomUUID();
  for(const id of [owner,stranger,member])await q('INSERT INTO auth.users VALUES($1)',[id]);
  const setup=(id,name)=>user(id,async()=> (await q('SELECT public.setup_household($1,$2,$3) AS id',[name,'User input','2027-01-01'])).rows[0].id);
@@ -96,6 +97,13 @@ try {
   const foreignTask=randomUUID();
   await user(stranger,()=>q("INSERT INTO public.tasks(id,household_id,name) VALUES($1,$2,'Another household task')",[foreignTask,other]));
   await assert.rejects(save([up('tasks',foreignTask,{name:'Attempted overwrite',priority:'Medium',status:'Pending'})]),e=>e.code==='42501');
+ });
+ await test('Planned total persists and settles once with existing tenant protections',async()=>{
+  const id=randomUUID();const row={title:'Delivery plan',paid_amount:0,total_amount:20000000,expense_date:'2027-02-10',source:'manual'};
+  snapshot=await save([up('expenses',id,row)]);assert.equal(snapshot.expenses.find(e=>e.id===id).total_amount,20000000);
+  await assert.rejects(save([up('expenses',id,{...row,paid_amount:21000000})]),e=>e.code==='23514');
+  snapshot=await save([up('expenses',id,{...row,paid_amount:19000000,total_amount:null,expense_date:'2027-02-11'})]);
+  assert.equal(snapshot.expenses.filter(e=>e.id===id).length,1);assert.equal(snapshot.expenses.find(e=>e.id===id).paid_amount,19000000);
  });
  console.log(`Persistence SQL: ${count} groups passed`);
 }finally{await db.close();}

@@ -18,7 +18,7 @@ export function shoppingSpend(expenses: Expense[]) {
 }
 export function categorySpending(expenses: Expense[]) {
   const totals = new Map<string, number>();
-  for (const e of expenses) totals.set(e.category || 'Lainnya', (totals.get(e.category || 'Lainnya') || 0) + e.paidAmount);
+  for (const e of expenses.filter(e=>e.paidAmount>0||e.paymentStatus==='Paid')) totals.set(e.category || 'Lainnya', (totals.get(e.category || 'Lainnya') || 0) + e.paidAmount);
   return Array.from(totals, ([category, amount]) => ({ category, amount }));
 }
 export function buyShopping(records: FamilyRecords, id: string, price: number, date: string): FamilyRecords {
