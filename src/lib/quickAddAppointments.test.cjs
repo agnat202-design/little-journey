@@ -206,7 +206,7 @@ test('Appointment custom time, optional time, edit and confirmed delete', () => 
 });
 
 function newShopping(estimate) { const entry = openQuick('Belanja'); const data = { 'record-title': 'Barang pilihan' }; if (estimate !== undefined) data['shopping-estimate'] = String(estimate); submit(fillEntry(entry, data)); return view('ShoppingView'); }
-function purchase(list, price, date = '2026-10-03') { const item = list.props.items[0]; let card = render(list.type, { ...list.props, items: [item] }); button(card, 'Tandai Beli').props.onClick(); card = render(list.type, { ...list.props, items: [item] }); assert.equal(find(card, n => n.type === 'input' && n.props.type === 'number').props.value, '', 'Estimate is never prefilled as actual'); field(card, `buy-price-${item.id}`, String(price)); card = render(list.type, { ...list.props, items: [item] }); field(card, `buy-date-${item.id}`, date); card = render(list.type, { ...list.props, items: [item] }); submit(card); return view('ShoppingView'); }
+function purchase(list, price, date = '2026-10-03') { const item = list.props.items[0]; let card = render(list.type, { ...list.props, items: [item] }); button(card, 'Tandai Beli').props.onClick(); card = render(list.type, { ...list.props, items: [item] }); assert.equal(find(card, n => n.type === 'input' && n.props.id === `buy-price-${item.id}`).props.value, '', 'Estimate is never prefilled as actual'); field(card, `buy-price-${item.id}`, String(price)); card = render(list.type, { ...list.props, items: [item] }); field(card, `buy-date-${item.id}`, date); card = render(list.type, { ...list.props, items: [item] }); submit(card); return view('ShoppingView'); }
 
 test('Shopping estimate, optional fields, URL and no comparison or research terminology', () => {
   const entry = openQuick('Belanja'); let form = render(entry.type, entry.props); assert.equal(nodes(form).filter(n => n.props.required).length, 1); assert.ok(!nodes(form).some(n=>n.props.id==='record-week')); assert.ok(!text(form).includes('Target Minggu')); assert.ok(text(form).includes('Rencana Beli'));
@@ -333,6 +333,12 @@ test('Documents add/view/edit/delete with local file metadata and required file'
   list.props.onView(doc); const attachment = view('AttachmentView'); const preview = render(attachment.type, attachment.props); assert.equal(find(preview, n => n.type === 'iframe').props.src, doc.fileUrl); attachment.props.onClose();
   list.props.onEdit(doc); entry = entryFromEditor(); submit(fillEntry(entry, { 'record-title': 'Resep keluarga', 'document-type': 'Resep' })); list = view('DocumentsView'); assert.equal(list.props.documents.length, 1); assert.equal(list.props.documents[0].documentType, 'Resep'); assert.equal(list.props.documents[0].attachment.id, doc.attachment.id);
   list.props.onDelete(list.props.documents[0]); assert.equal(view('DocumentsView').props.documents.length, 1); confirm('Hapus'); assert.equal(view('DocumentsView').props.documents.length, 0);
+});
+
+test('Currency inputs show thousands separators while saving the original amount', () => {
+ const entry=openQuick('Pengeluaran');let form=fillEntry(entry,{'record-title':'Tes','expense-amount':'27.700.000','record-date':'2026-11-02'});
+ assert.equal(find(form,n=>n.props.id==='expense-amount').props.value,'27.700.000');submit(form);assert.equal(view('BudgetView').props.expenses[0].paidAmount,27700000);
+ nav('budget');view('BudgetView').props.onAddPlan();const modal=view('CostPlanModal');let tree=render(modal.type,modal.props);field(tree,'plan-amount','27.700.000');tree=render(modal.type,modal.props);assert.equal(find(tree,n=>n.props.id==='plan-amount').props.value,'27.700.000');
 });
 
 test('Future medical cost affects projection, not actual; payment replaces the same plan', () => {

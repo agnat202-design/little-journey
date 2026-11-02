@@ -1,3 +1,4 @@
+import {formatRupiahInput,readRupiahInput} from '../../lib/rupiahInput';
 import { ExtraAttachments } from './ExtraAttachments';
 import { categoryLabel } from '../../lib/plainLabels';
 import { attachmentLabel } from '../../lib/uploadImage';
@@ -74,7 +75,7 @@ export function RecordEntryForm({ kind, initial = {}, stage = 'pregnancy', onSav
     && (kind !== 'document' || (!!documentType && !!attachment))
     && (kind !== 'shopping' || ((!url.trim() || isSafeShoppingUrl(url.trim())) && (optionalPrice === undefined || isShoppingPrice(optionalPrice))))
     && (!isBought || (isShoppingPrice(actual) && !!purchaseDate));
-  const field = (id: string, label: string, value: string, update: (value: string) => void, type = 'text', required = false) => <div><label htmlFor={id} className={labelClass}>{label}{required ? ' *' : ''}</label><input id={id} type={type} required={required} min={type === 'number' ? 0 : undefined} step={type === 'number' ? 1 : undefined} value={value} onChange={e => update(e.target.value)} className={fieldClass} /></div>;
+  const field = (id: string, label: string, value: string, update: (value: string) => void, type = 'text', required = false) => <div><label htmlFor={id} className={labelClass}>{label}{required ? ' *' : ''}</label><input id={id} type={type === 'number' ? 'text' : type} inputMode={type === 'number' ? 'numeric' : undefined} required={required} min={type === 'number' ? 0 : undefined} step={type === 'number' ? 1 : undefined} value={type === 'number' ? formatRupiahInput(value) : value} onChange={e => update(type === 'number' ? readRupiahInput(e.target.value) : e.target.value)} className={fieldClass} /></div>;
   return <form className="space-y-4" onSubmit={e => {
     e.preventDefault(); if (!valid) return; setSaving(true);
     const result = onSave({ title: title.trim(), brand: brand.trim() || undefined, model: model.trim() || undefined,

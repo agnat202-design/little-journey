@@ -111,3 +111,7 @@ assert.ok(savedMulti.records.documents[0].extraAttachments?.every(a=>a.storagePa
 fail=true;const failureRepo=await HouseholdRepository.load(client,householdId);
 await assert.rejects(failureRepo.save(multiInput));assert.equal(removed.at(-1)?.length,3,'All three uncommitted files cleaned on failure');
 console.log('PASS three-file upload metadata roundtrip and rollback cleanup');
+
+const {formatRupiahInput,readRupiahInput}=await import('./rupiahInput');
+for(const [raw,display] of [['27700000','27.700.000'],['0','0'],['',''],['1234.50','1.234,50']]){assert.equal(formatRupiahInput(raw),display);assert.equal(readRupiahInput(display),raw);}
+assert.equal(readRupiahInput('Rp 27.700.000'),'27700000');assert.equal(readRupiahInput('-100'),'-100');
