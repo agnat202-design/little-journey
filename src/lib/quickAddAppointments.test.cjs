@@ -335,6 +335,12 @@ test('Documents add/view/edit/delete with local file metadata and required file'
   list.props.onDelete(list.props.documents[0]); assert.equal(view('DocumentsView').props.documents.length, 1); confirm('Hapus'); assert.equal(view('DocumentsView').props.documents.length, 0);
 });
 
+test('Upcoming needs separate cost and goods totals, unknown prices and overdue labels', () => {
+ nav('budget');const v=view('BudgetView');let opened=0;const props={...v.props,today:'2026-11-02',onOpenShopping:()=>opened++,expenses:[{id:'plan',title:'Delivery plan',category:'Medical',totalAmount:27700000,paidAmount:0,paymentStatus:'Unpaid',expenseDate:'2027-02-02'}],shoppingItems:[{id:'one',item:'Stroller',category:'Baby Gear',status:'Wishlist',quantity:1,estimatedPrice:5599000,currentPrice:5599000},{id:'two',item:'Carrier',category:'Travel',status:'Wishlist',quantity:1,estimatedPrice:2000000,currentPrice:2000000},{id:'unknown',item:'Unknown',status:'Wishlist',quantity:1}]};
+ let tree=render(v.type,props);const section=find(tree,n=>n.props['aria-label']==='Kebutuhan Mendatang');assert.ok(text(section).includes('Rp 35.299.000'));assert.ok(text(section).includes('Rp 7.599.000'));assert.ok(text(section).includes('1 barang belum ada harga'));assert.ok(!text(section).includes('Lewat tanggal rencana'));button(section,'Lihat di Belanja →').props.onClick();assert.equal(opened,1);
+ tree=render(v.type,{...props,today:'2027-02-03'});assert.ok(text(tree).includes('Lewat tanggal rencana'));
+});
+
 test('Currency inputs show thousands separators while saving the original amount', () => {
  const entry=openQuick('Pengeluaran');let form=fillEntry(entry,{'record-title':'Tes','expense-amount':'27.700.000','record-date':'2026-11-02'});
  assert.equal(find(form,n=>n.props.id==='expense-amount').props.value,'27.700.000');submit(form);assert.equal(view('BudgetView').props.expenses[0].paidAmount,27700000);

@@ -1,7 +1,7 @@
 // Update this entry and its unique version whenever a user-facing feature ships.
 export const latestRelease = {
- version:'1.6.1', date:'2 November 2026',title:'Nominal lebih mudah dibaca',
- changes:['Angka uang otomatis memakai titik ribuan: 27.700.000.','Berlaku pada rencana biaya, pengeluaran, belanja, pembayaran, dan anggaran.'],
+ version:'1.7.0',date:'2 November 2026',title:'Kebutuhan mendatang lebih mudah dibaca',
+ changes:['Biaya belum dibayar dan barang belum dibeli dipisahkan, lengkap dengan subtotal.','Biaya memakai merah muda; barang memakai ungu muda.','Tanda merah lebih tegas hanya saat melewati tanggal rencana.'],
 };
 export const releaseNoticeKey=(version:string)=>'little-journey:update-views:'+version;
 export function claimReleaseNotice(storage:Pick<Storage,'getItem'|'setItem'>,version:string):boolean {

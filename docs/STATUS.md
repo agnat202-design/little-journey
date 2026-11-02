@@ -77,3 +77,6 @@ Login operator agnat202-design pada project Little Journey dikonfirmasi. Pemerik
 
 ## 2 November 2026 — Pemisah ribuan input uang
 Input nominal di rencana/pembayaran, pengeluaran/belanja, harga beli, dan anggaran menampilkan titik ribuan otomatis. Form state dan database tetap numerik tanpa grouping; koma desimal didukung hanya sejauh validasi nominal fitur terkait mengizinkan. Keyboard angka HP via inputMode. Release 1.6.1. Tidak ada migrasi database.
+
+## 2 November 2026 — Kebutuhan Mendatang 1.7.0
+Keuangan memisahkan biaya belum dibayar dan barang belum dibeli menjadi kelompok/kartu dengan subtotal dan total perlu disiapkan. Warna lembut per jenis; tanggal biaya yang lewat memakai label dan penekanan merah, bukan status pasti terlambat membayar. Biaya diurutkan tanggal, unknown-price barang disebutkan, link ke Belanja tersedia, hapus rencana ditempatkan di Lainnya dengan konfirmasi lama. Rumus proyeksi memakai kalkulasi existing; tanpa migrasi.

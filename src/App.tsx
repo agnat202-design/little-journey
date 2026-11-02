@@ -248,6 +248,7 @@ export default function App({ runtime, onLogout }: { runtime?: HouseholdRuntime;
           {activeTab === 'budget' && (
             <BudgetView
               isBudgetConfigured={isBudgetConfigured}
+              onOpenShopping={()=>setActiveTab('shopping')}
               onAddPlan={() => setCostPlan({})}
               onEditPlan={expense => setCostPlan({expense})}
               onPayPlan={expense => setCostPlan({expense,paying:true})}
