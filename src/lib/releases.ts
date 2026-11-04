@@ -1,7 +1,7 @@
 // Update this entry and its unique version whenever a user-facing feature ships.
 export const latestRelease = {
- version:'1.7.0',date:'2 November 2026',title:'Kebutuhan mendatang lebih mudah dibaca',
- changes:['Biaya belum dibayar dan barang belum dibeli dipisahkan, lengkap dengan subtotal.','Biaya memakai merah muda; barang memakai ungu muda.','Tanda merah lebih tegas hanya saat melewati tanggal rencana.'],
+ version:'2.0.0',date:'4 November 2026',title:'Beranda baru, catatan lebih mudah ditemukan',
+ changes:['Beranda lebih ringkas: jadwal terdekat, persiapan, dan keuangan.','Dokumen bisa dicari, disaring menurut jenis, dan diurutkan.','Checklist bisa difilter menjadi belum selesai atau selesai.'],
 };
 export const releaseNoticeKey=(version:string)=>'little-journey:update-views:'+version;
 export function claimReleaseNotice(storage:Pick<Storage,'getItem'|'setItem'>,version:string):boolean {

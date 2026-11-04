@@ -140,3 +140,6 @@ Input nominal di rencana/pembayaran, pengeluaran/belanja, harga beli, dan anggar
 
 ## 2 November 2026 — Kebutuhan Mendatang 1.7.0
 Keuangan memisahkan biaya belum dibayar dan barang belum dibeli menjadi kelompok/kartu dengan subtotal dan total perlu disiapkan. Warna lembut per jenis; tanggal biaya yang lewat memakai label dan penekanan merah, bukan status pasti terlambat membayar. Biaya diurutkan tanggal, unknown-price barang disebutkan, link ke Belanja tersedia, hapus rencana ditempatkan di Lainnya dengan konfirmasi lama. Rumus proyeksi memakai kalkulasi existing; tanpa migrasi.
+
+## 4 November 2026 — UI 2.0
+Beranda dibangun ulang dengan prioritas jadwal terdekat (2), persiapan berikut (3), akses cepat, ringkasan keuangan actual/proyeksi tanpa informasi berulang. Hero kehamilan dipadatkan, data tetap dari HPL. Dokumen: pencarian lokal judul/catatan/jenis/nama file, filter jenis, urutan terbaru/terlama/nama; informasi penyimpanan dilipat. Checklist: filter semua/belum selesai/selesai. Tidak menambah asumsi kesehatan, tracker pertumbuhan atau rekomendasi vaksin dari screenshot referensi; fitur-fitur itu memerlukan model data dan validasi tersendiri. Tanpa migrasi database.

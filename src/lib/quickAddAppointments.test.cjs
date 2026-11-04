@@ -326,6 +326,13 @@ test('Global quick add includes Documents and saves the same required-file recor
  form=attach(entry,'lab.pdf','application/pdf');submit(form);const doc=view('DocumentsView').props.documents[0];assert.equal(doc.title,'Hasil darah');assert.equal(doc.attachment.name,'lab.pdf');assert.equal(doc.documentType,'Hasil Lab');
 });
 
+test('Documents filter/search/sort and checklist status controls work with existing records', () => {
+ nav('documents');const v=view('DocumentsView');const docs=[{id:'a',title:'USG lama',documentType:'USG',documentDate:'2026-01-01',attachment:{name:'a.pdf',mimeType:'application/pdf',size:10}},{id:'b',title:'Lab baru',notes:'Darah',documentType:'Hasil Lab',documentDate:'2026-11-01',attachment:{name:'b.pdf',mimeType:'application/pdf',size:10}}];let tree=render(v.type,{...v.props,documents:docs});
+ find(tree,n=>n.props['aria-label']==='Cari dokumen').props.onChange({target:{value:'darah'}});tree=render(v.type,{...v.props,documents:docs});assert.ok(text(tree).includes('Lab baru'));assert.ok(!text(tree).includes('USG lama'));
+ find(tree,n=>n.props['aria-label']==='Cari dokumen').props.onChange({target:{value:''}});find(tree,n=>n.props['aria-label']==='Jenis dokumen').props.onChange({target:{value:'USG'}});tree=render(v.type,{...v.props,documents:docs});assert.ok(text(tree).includes('USG lama'));assert.ok(!text(tree).includes('Lab baru'));
+ nav('checklist');const list=view('ChecklistView');const props={...list.props,items:[{id:'pending',name:'Pending task',category:'Medical',priority:'Medium',status:'Pending'},{id:'done',name:'Done task',category:'Medical',priority:'Medium',status:'Completed'}]};tree=render(list.type,props);button(tree,'Belum selesai').props.onClick();tree=render(list.type,props);assert.ok(text(tree).includes('Pending task'));assert.ok(!text(tree).includes('Done task'));button(tree,'Selesai').props.onClick();tree=render(list.type,props);assert.ok(!text(tree).includes('Pending task'));assert.ok(text(tree).includes('Done task'));
+});
+
 test('Documents add/view/edit/delete with local file metadata and required file', () => {
   nav('documents'); let list = view('DocumentsView'); assert.equal(list.props.documents.length, 0); list.props.onAdd(); let entry = entryFromEditor(); let form = fillEntry(entry, { 'record-title': 'USG keluarga', 'record-date': '2026-10-03', 'record-notes': 'Untuk kontrol berikutnya' }); assert.equal(find(form, n => n.type === 'button' && n.props.type === 'submit').props.disabled, true);
   const selector = find(form, n => n.props.id === 'document-type'); for (const type of ['USG','Hasil Lab','Dokumen Kontrol','Invoice','Receipt','Resep','Lainnya']) assert.ok(text(selector).includes(type));

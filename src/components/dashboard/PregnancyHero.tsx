@@ -26,7 +26,7 @@ export const PregnancyHero: React.FC<PregnancyHeroProps> = ({
   return (
     <section 
       aria-label="Status Kehamilan"
-      className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-[#34236B] via-[#452D8A] to-[#6C4CF5] p-5 sm:p-6 text-white shadow-xl shadow-[#34236B]/20"
+      className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#34236B] via-[#452D8A] to-[#6C4CF5] p-5 sm:p-6 text-white shadow-sm"
     >
       {/* Soft Background Accents */}
       <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
@@ -36,11 +36,11 @@ export const PregnancyHero: React.FC<PregnancyHeroProps> = ({
         <div className="flex-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-[#FFD45A] text-xs font-black mb-2">
             
-            <span>{isDemo?'Demo • ':''}Minggu ke-{currentWeek} • Trimester {trimester}</span>
+            <span>{isDemo?'Demo • ':''}Kehamilan • Trimester {trimester}</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-            {isDemo?'Contoh perjalanan kehamilan':'Perjalanan kehamilan'}
+            {isDemo?'Contoh • ':''}Minggu ke-{currentWeek}
           </h1>
           <p className="text-xs sm:text-sm font-semibold text-white/80 mt-1">
             {daysRemaining>0?`${daysRemaining} hari menuju `:''}HPL {isDemo?'contoh ':''}{displayDate(demoDueDate)}
@@ -49,14 +49,14 @@ export const PregnancyHero: React.FC<PregnancyHeroProps> = ({
 
         {/* Pip Mascot in Hero */}
         <div className="relative -mt-2 -mr-2">
-          <PipMascot mood="happy" size={92} />
+          <PipMascot mood="happy" size={64} />
         </div>
       </div>
 
       {/* Gestational Progress Bar (40 Weeks Standard) */}
       <div className="mt-4 pt-3 border-t border-white/15">
         <div className="flex items-center justify-between text-[11px] sm:text-xs font-extrabold text-white/90 mb-1.5">
-          <span>Progress Kehamilan: {currentWeek} / 40 Minggu</span>
+          <span>Perjalanan kehamilan: {currentWeek} / 40 Minggu</span>
           <span className="text-[#52D6C7]">
             {progressPercent}%
           </span>

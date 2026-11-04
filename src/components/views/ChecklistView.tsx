@@ -23,11 +23,14 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
   onEditItem,
   onDeleteItem,
 }) => {
+  const [statusFilter,setStatusFilter]=useState('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   const categories = [...new Set(items.map(item => item.category).filter(Boolean))].sort();
 
   const filteredItems = items.filter((item) => {
+    if(statusFilter==='pending' && ['Completed','Skipped'].includes(item.status))return false;
+    if(statusFilter==='completed' && item.status!=='Completed')return false;
     if (selectedCategory !== 'All' && item.category !== selectedCategory) return false;
     return true;
   });
@@ -75,6 +78,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
         Tambah Checklist
       </button>
 
+      <div role="group" aria-label="Status checklist" className="flex flex-wrap gap-2">{[['all','Semua'],['pending','Belum selesai'],['completed','Selesai']].map(([key,label])=><button key={key} aria-pressed={statusFilter===key} onClick={()=>setStatusFilter(key)} className={statusFilter===key?'rounded-xl bg-[#34236B] text-white px-4 py-2 text-sm font-bold':'rounded-xl border border-[#E9E4DC] bg-white px-4 py-2 text-sm font-bold'}>{label}</button>)}</div>
       <label className="block text-xs font-bold text-[#79738E]">Kategori
         <select aria-label="Filter kategori checklist" value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="mt-1 block w-full sm:max-w-xs rounded-2xl border border-[#EBE6DC] bg-white p-3 text-[#292442]">
           <option value="All">Semua kategori</option>
@@ -87,7 +91,7 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
         {filteredItems.length === 0 ? (
           <div className="bg-white rounded-[28px] p-8 text-center border border-[#F0ECE4]">
             <PipMascot mood="sleeping" size={72} className="mx-auto mb-2" />
-            <h2 className="text-base font-black text-[#292442]">Belum ada checklist di kategori ini</h2>
+            <h2 className="text-base font-black text-[#292442]">Tidak ada checklist yang cocok</h2>
             <p className="text-xs font-bold text-[#79738E] mt-1 max-w-[240px] mx-auto">
               Tambahkan checklist pertama untuk mempersiapkan kebutuhan buah hati!
             </p>
